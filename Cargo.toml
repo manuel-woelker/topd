@@ -5,3 +5,6 @@ authors = ["Manuel Woelker <github@manuel.woelker.org>"]
 
 [dependencies]
 nickel = "*"
+procinfo = "*"
+serde = "*"
+serde_json = "*"
