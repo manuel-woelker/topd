@@ -52,7 +52,7 @@ gulp.task('dev', function () {
 		// This is useful if you want to get rid of 'http://localhost:8080/' in script[src],
 		// and has many other use cases (see https://github.com/webpack/webpack-dev-server/pull/127 ).
 		proxy: {
-			"/api/*": "http://localhost:8080"
+			"/api/*": "http://localhost:3000"
 		}
 	});
 	server.listen(8081, "0.0.0.0", function () {
