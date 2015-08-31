@@ -33,6 +33,9 @@ module.exports = {
     ]
   },
   plugins: [
+      new webpack.ProvidePlugin({
+        React: "react"
+      })
 //    new webpack.HotModuleReplacementPlugin(),
 //    new webpack.NoErrorsPlugin()
   ]

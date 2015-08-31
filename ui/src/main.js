@@ -1,11 +1,17 @@
 require("babel/polyfill");
 
+require("expose?React!react");
 
-import React from "react";
 import Router from "react-router";
 
 
-import { createStore } from 'redux';
+// Redux utility functions
+import { compose, createStore, applyMiddleware } from 'redux';
+// Redux DevTools store enhancers
+import { devTools, persistState } from 'redux-devtools';
+// React components for Redux DevTools
+import { DevTools, DebugPanel, LogMonitor } from 'redux-devtools/lib/react';
+
 import { Provider } from 'react-redux';
 import TopApp from './app/TopApp';
 import reducers from './app/reducers';
@@ -14,7 +20,15 @@ import reducers from './app/reducers';
 require("bootstrap/dist/css/bootstrap.css");
 require("./style/style.css");
 
-let store = createStore(reducers);
+const finalCreateStore = compose(
+	// Provides support for DevTools:
+	devTools(),
+	// Lets you write ?debug_session=<name> in address bar to persist debug sessions
+	persistState(window.location.href.match(/[?&]debug_session=([^&]+)\b/)),
+	createStore
+);
+
+let store = finalCreateStore(reducers);
 
 function render(loadavg) {
 }
@@ -22,9 +36,14 @@ function render(loadavg) {
 
 window.onload = function() {
 	React.render(
+		<div>
 		<Provider store={store}>
 			{() => <TopApp />}
-		</Provider>,
+		</Provider>
+			<DebugPanel top right bottom>
+				<DevTools store={store} monitor={LogMonitor} />
+			</DebugPanel>
+			</div>,
 		document.getElementById('application')
 	);
 	setInterval(() => {
