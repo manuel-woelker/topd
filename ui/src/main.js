@@ -33,39 +33,45 @@ let store = finalCreateStore(reducers);
 function render(loadavg) {
 }
 
+let debugPanel = <DebugPanel top right bottom>
+	<DevTools store={store} monitor={LogMonitor}/>
+</DebugPanel>;
 
-window.onload = function() {
+debugPanel = null;
+
+
+window.onload = function () {
 	React.render(
 		<div>
-		<Provider store={store}>
-			{() => <TopApp />}
-		</Provider>
-			<DebugPanel top right bottom>
-				<DevTools store={store} monitor={LogMonitor} />
-			</DebugPanel>
-			</div>,
+			<Provider store={store}>
+				{() => <TopApp />}
+			</Provider>
+			{debugPanel}
+		</div>,
 		document.getElementById('application')
 	);
-	setInterval(() => {
+	let getSystemMetrics = () => {
 		var oReq = new XMLHttpRequest();
-		oReq.addEventListener("load", function reqListener () {
+		oReq.addEventListener("load", function reqListener() {
 			let responseJson = JSON.parse(this.responseText);
-			store.dispatch({type: "APPLY_LOADAVG", loadavg: responseJson});
+			store.dispatch({type: "RECEIVE_SYSTEM_METRICS", systemMetrics: responseJson});
 		});
-		oReq.open("GET", "api/loadavg", true);
+		oReq.open("GET", "api/system-metrics", true);
 		oReq.send();
-	}, 1000);
+	};
 
-	store.dispatch({type: "GET_LOADAVG"});
-/*	render();
-	setInterval(() => {
-		var oReq = new XMLHttpRequest();
-		oReq.addEventListener("load", function reqListener () {
-			let responseJson = JSON.parse(this.responseText);
-			render(responseJson);
-		});
-		oReq.open("GET", "api/loadavg", true);
-		oReq.send();
-	}, 1000)
-	*/
+	setInterval(getSystemMetrics, 1000);
+	getSystemMetrics();
+
+	/*	render();
+	 setInterval(() => {
+	 var oReq = new XMLHttpRequest();
+	 oReq.addEventListener("load", function reqListener () {
+	 let responseJson = JSON.parse(this.responseText);
+	 render(responseJson);
+	 });
+	 oReq.open("GET", "api/loadavg", true);
+	 oReq.send();
+	 }, 1000)
+	 */
 };

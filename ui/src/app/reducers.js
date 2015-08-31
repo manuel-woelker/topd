@@ -1,22 +1,21 @@
-
-
 let initialState = {
-    loadavg: {
-    }
+	systemMetrics: {
+		loadavg: {}
+	}
 };
 
 
-function applyLoadAvg(state, action) {
-    return Object.assign({}, state, {loadavg: action.loadavg});
+function receiveSystemMetrics(state, action) {
+	return Object.assign({}, state, {systemMetrics: action.systemMetrics});
 }
 
 function reducer(state = initialState, action = {}) {
-    switch (action.type) {
-        case "APPLY_LOADAVG":
-            return applyLoadAvg(state, action);
-        default:
-            return state;
-    }
+	switch (action.type) {
+		case "RECEIVE_SYSTEM_METRICS":
+			return receiveSystemMetrics(state, action);
+		default:
+			return state;
+	}
 }
 
 export default reducer;

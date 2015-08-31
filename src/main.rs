@@ -14,13 +14,15 @@ fn main() {
     let mut server = Nickel::new();
     let mut router = Nickel::router();
 
-    router.get("/api/loadavg", middleware! { |_, mut response|
+    router.get("/api/system-metrics", middleware! { |_, mut response|
         response.set(MediaType::Json);
         let loadavg = procinfo::loadavg().unwrap();
         let mut result = HashMap::new();
-        result.insert("load_avg_1_min", loadavg.load_avg_1_min);
-        result.insert("load_avg_5_min", loadavg.load_avg_5_min);
-        result.insert("load_avg_10_min", loadavg.load_avg_10_min);
+        let mut loadavg_map = HashMap::new();
+        loadavg_map.insert("load_avg_1_min", loadavg.load_avg_1_min);
+        loadavg_map.insert("load_avg_5_min", loadavg.load_avg_5_min);
+        loadavg_map.insert("load_avg_10_min", loadavg.load_avg_10_min);
+        result.insert("loadavg", loadavg_map);
         serde_json::to_string(&result).unwrap()
     });
 
