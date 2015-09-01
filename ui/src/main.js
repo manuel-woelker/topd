@@ -20,24 +20,34 @@ import reducers from './app/reducers';
 require("bootstrap/dist/css/bootstrap.css");
 require("./style/style.css");
 
+/*
 const finalCreateStore = compose(
 	// Provides support for DevTools:
-	devTools(),
+//	devTools()
 	// Lets you write ?debug_session=<name> in address bar to persist debug sessions
-	persistState(window.location.href.match(/[?&]debug_session=([^&]+)\b/)),
-	createStore
-);
+//	persistState(window.location.href.match(/[?&]debug_session=([^&]+)\b/))
+)(createStore);
+*/
+
+let finalCreateStore = createStore;
 
 let store = finalCreateStore(reducers);
 
-function render(loadavg) {
+
+if (module.hot) {
+	// Enable Webpack hot module replacement for reducers
+	module.hot.accept('./app/reducers', () => {
+		const nextRootReducer = require('./app/reducers');
+		store.replaceReducer(nextRootReducer);
+	});
 }
 
+let debugPanel = null;
+/*
 let debugPanel = <DebugPanel top right bottom>
 	<DevTools store={store} monitor={LogMonitor}/>
 </DebugPanel>;
-
-debugPanel = null;
+*/
 
 
 window.onload = function () {
@@ -62,16 +72,4 @@ window.onload = function () {
 
 	setInterval(getSystemMetrics, 1000);
 	getSystemMetrics();
-
-	/*	render();
-	 setInterval(() => {
-	 var oReq = new XMLHttpRequest();
-	 oReq.addEventListener("load", function reqListener () {
-	 let responseJson = JSON.parse(this.responseText);
-	 render(responseJson);
-	 });
-	 oReq.open("GET", "api/loadavg", true);
-	 oReq.send();
-	 }, 1000)
-	 */
 };
