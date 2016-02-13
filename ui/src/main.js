@@ -69,7 +69,17 @@ window.onload = function () {
 		oReq.open("GET", "api/system-metrics", true);
 		oReq.send();
 	};
+	let getSystemInfo = () => {
+		var oReq = new XMLHttpRequest();
+		oReq.addEventListener("load", function reqListener() {
+			let responseJson = JSON.parse(this.responseText);
+			store.dispatch({type: "RECEIVE_SYSTEM_INFO", systemInfo: responseJson});
+		});
+		oReq.open("GET", "api/system-info", true);
+		oReq.send();
+	};
 
 	setInterval(getSystemMetrics, 1000);
+	getSystemInfo();
 	getSystemMetrics();
 };

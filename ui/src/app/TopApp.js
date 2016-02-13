@@ -8,7 +8,7 @@ import LoadAvgComponent from "../load/LoadAvgComponent.js";
 export default connect(state => state)(React.createClass({
 	render() {
 		return <div>
-			<Navbar brand={<a href="#">topd</a>}>
+			<Navbar fluid brand={<a href="#">topd <b>{this.props.systemInfo.hostname}</b></a>}>
 				<Nav>
 					<NavItem eventKey={1} href='#'>Refresh</NavItem>
 				</Nav>
