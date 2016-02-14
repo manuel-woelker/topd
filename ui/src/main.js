@@ -78,8 +78,15 @@ window.onload = function () {
 		oReq.open("GET", "api/system-info", true);
 		oReq.send();
 	};
-
+/*
 	setInterval(getSystemMetrics, 1000);
 	getSystemInfo();
-	getSystemMetrics();
+	getSystemMetrics();*/
+	var evtSource = new EventSource("/api/system-metrics-events");
+	evtSource.addEventListener("metrics", function(e) {
+		console.log("EVENT!");
+		console.log(e.data);
+		console.log(e);
+
+	}, false);
 };

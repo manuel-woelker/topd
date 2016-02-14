@@ -1,6 +1,5 @@
 #![allow(dead_code)]
 #[macro_use]
-extern crate nickel;
 extern crate procinfo;
 
 extern crate serde;
@@ -8,14 +7,22 @@ extern crate num_cpus;
 extern crate serde_json;
 
 extern crate libc;
+extern crate iron;
+extern crate mime;
+extern crate time;
+
+use iron::prelude::*;
+use iron::response::{ResponseBody, WriteBody};
+use iron::status;
+use mime::{Mime, TopLevel, SubLevel};
 
 use std::collections::HashMap;
 use std::collections::BTreeMap;
-
-use nickel::{Nickel, HttpRouter, StaticFilesHandler, MediaType};
+use std::io::Write;
+use std::thread::sleep;
 
 use libc::{c_char,c_int,size_t};
-
+use std::time::Duration;
 use std::iter::repeat;
 use std::io::{Error,ErrorKind,Result};
 use serde_json::value::to_value;
@@ -44,8 +51,36 @@ pub fn hostname() -> Result<String> {
     // Create an owned string from the buffer, transforming UTF-8 errors into IO errors
     String::from_utf8(buffer).map_err(|e| Error::new(ErrorKind::Other, e))
 }
+
+struct MetricsEventStream;
+
+impl WriteBody for MetricsEventStream {
+    fn write_body(&mut self, res: &mut ResponseBody) -> Result<()> {
+        loop {
+            write!(res, "event: metrics\n");
+            write!(res, "data: foobar one {}\n\n", time::now_utc().rfc3339());
+            res.flush();
+            sleep(Duration::from_secs(1));
+        }
+        Ok(())
+    }
+}
+
+unsafe impl Send for MetricsEventStream {}
+
 fn main() {
-	let mut server = Nickel::new();
+    println!("Listening on http://localhost:3000/");
+
+    Iron::new(|_: &mut Request| {
+        let mes = MetricsEventStream;
+        let mesbox: Box<WriteBody + Send> = Box::new(mes);
+        let mime: Mime = "text/event-stream".parse().unwrap();
+        let mut response = Response::with((status::Ok, mime));
+        response.body = Some(mesbox);
+        Ok(response)
+    }).http("localhost:3000").unwrap();
+
+/*	let mut server = Nickel::new();
 	let mut router = Nickel::router();
 
 	router.get("/api/system-info", middleware! { |_, mut response|
@@ -73,4 +108,5 @@ fn main() {
 //	  server.get("**", middleware!("Hello World"));
 	server.listen("127.0.0.1:3000");
 	println!("Listening on http://localhost:3000/");
+    */
 }

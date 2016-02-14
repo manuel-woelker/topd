@@ -5,7 +5,9 @@ authors = ["Manuel Woelker <github@manuel.woelker.org>"]
 
 [dependencies]
 libc = "*"
-nickel = "*"
+iron = "0.2.6"
+mime = "0.1.3"
+time = "*"
 procinfo = "*"
 serde = "*"
 serde_json = "*"
