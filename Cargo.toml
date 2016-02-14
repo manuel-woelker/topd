@@ -6,6 +6,7 @@ authors = ["Manuel Woelker <github@manuel.woelker.org>"]
 [dependencies]
 libc = "*"
 iron = "0.2.6"
+mount = "0.0.10"
 mime = "0.1.3"
 time = "*"
 procinfo = "*"

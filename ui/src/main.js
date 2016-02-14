@@ -80,13 +80,14 @@ window.onload = function () {
 	};
 /*
 	setInterval(getSystemMetrics, 1000);
-	getSystemInfo();
 	getSystemMetrics();*/
+
+	getSystemInfo();
+	
 	var evtSource = new EventSource("/api/system-metrics-events");
 	evtSource.addEventListener("metrics", function(e) {
-		console.log("EVENT!");
-		console.log(e.data);
-		console.log(e);
-
+		var metrics = JSON.parse(e.data);
+        console.log(metrics);
+		store.dispatch({type: "RECEIVE_SYSTEM_METRICS", systemMetrics: metrics});
 	}, false);
 };

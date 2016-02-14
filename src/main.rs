@@ -8,16 +8,17 @@ extern crate serde_json;
 
 extern crate libc;
 extern crate iron;
+extern crate mount;
+#[macro_use]
 extern crate mime;
 extern crate time;
 
 use iron::prelude::*;
 use iron::response::{ResponseBody, WriteBody};
 use iron::status;
-use mime::{Mime, TopLevel, SubLevel};
+use mount::Mount;
 
 use std::collections::HashMap;
-use std::collections::BTreeMap;
 use std::io::Write;
 use std::thread::sleep;
 
@@ -57,12 +58,21 @@ struct MetricsEventStream;
 impl WriteBody for MetricsEventStream {
     fn write_body(&mut self, res: &mut ResponseBody) -> Result<()> {
         loop {
-            write!(res, "event: metrics\n");
-            write!(res, "data: foobar one {}\n\n", time::now_utc().rfc3339());
-            res.flush();
+            try!(write!(res, "event: metrics\ndata: "));
+            let mut result = HashMap::new();
+            let mut loadavg_map = HashMap::new();
+            let loadavg = procinfo::loadavg().unwrap();
+            loadavg_map.insert("load_avg_1_min", loadavg.load_avg_1_min);
+            loadavg_map.insert("load_avg_5_min", loadavg.load_avg_5_min);
+            loadavg_map.insert("load_avg_10_min", loadavg.load_avg_10_min);
+            result.insert("loadavg", to_value(&loadavg_map));
+            result.insert("timestamp", to_value(&time::get_time().sec));
+
+            serde_json::to_writer(res, &result).unwrap();
+            try!(write!(res, "\n\n"));
+            try!(res.flush());
             sleep(Duration::from_secs(1));
         }
-        Ok(())
     }
 }
 
@@ -71,14 +81,23 @@ unsafe impl Send for MetricsEventStream {}
 fn main() {
     println!("Listening on http://localhost:3000/");
 
-    Iron::new(|_: &mut Request| {
-        let mes = MetricsEventStream;
-        let mesbox: Box<WriteBody + Send> = Box::new(mes);
-        let mime: Mime = "text/event-stream".parse().unwrap();
-        let mut response = Response::with((status::Ok, mime));
-        response.body = Some(mesbox);
+    let mut mount = Mount::new();
+    mount.mount("/api/system-metrics-events", |_: &mut Request| {
+        let stream = MetricsEventStream;
+        let boxed_stream: Box<WriteBody + Send> = Box::new(stream);
+        let response = Response::with((status::Ok, mime!(Text/EventStream), boxed_stream));
         Ok(response)
-    }).http("localhost:3000").unwrap();
+    });
+
+    mount.mount("/api/system-info", |_: &mut Request| {
+        let mut result = HashMap::new();
+        result.insert("numberOfCpus", to_value(&num_cpus::get()));
+        let _ = hostname().map(|hostname| result.insert("hostname", to_value(&hostname)));
+        let result = serde_json::to_string(&result).unwrap();
+
+        Ok(Response::with((status::Ok, mime!(Application/Json), result)))
+    });
+    Iron::new(mount).http("localhost:3000").unwrap();
 
 /*	let mut server = Nickel::new();
 	let mut router = Nickel::router();
