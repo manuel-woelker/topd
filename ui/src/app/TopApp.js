@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import {Navbar, Nav, NavItem, Grid, Row} from "react-bootstrap";
 
 import LoadAvgComponent from "../load/LoadAvgComponent.js";
+import CpuUsageComponent from "../cpu/CpuUsageComponent.js";
 
 
 export default connect(state => state)(React.createClass({
@@ -18,6 +19,7 @@ export default connect(state => state)(React.createClass({
 				<Grid fluid>
 					<Row>
 						<LoadAvgComponent loadavg={this.props.systemMetrics.loadavg}/>
+						<CpuUsageComponent cpu_usage={this.props.systemMetrics.cpu_usage}/>
 					</Row>
 				</Grid>
 			</div>

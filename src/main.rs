@@ -27,9 +27,16 @@ use std::time::Duration;
 use std::iter::repeat;
 use std::io::{Error,ErrorKind,Result};
 use serde_json::value::to_value;
+
+pub mod sensors;
+
+use sensors::cpu::CpuSensor;
+
 extern {
     pub fn gethostname(name: *mut c_char, size: size_t) -> c_int;
 }
+
+
 
 /// Calls `gethostname`
 pub fn hostname() -> Result<String> {
@@ -57,6 +64,7 @@ struct MetricsEventStream;
 
 impl WriteBody for MetricsEventStream {
     fn write_body(&mut self, res: &mut ResponseBody) -> Result<()> {
+        let mut cpu_sensor = CpuSensor::new();
         loop {
             try!(write!(res, "event: metrics\ndata: "));
             let mut result = HashMap::new();
@@ -67,11 +75,26 @@ impl WriteBody for MetricsEventStream {
             loadavg_map.insert("load_avg_10_min", loadavg.load_avg_10_min);
             result.insert("loadavg", to_value(&loadavg_map));
             result.insert("timestamp", to_value(&time::get_time().sec));
+            if let Some(cpu_usage) = cpu_sensor.measure() {
+                let mut usage_map = HashMap::new();
+                usage_map.insert("user", cpu_usage[0]);
+                usage_map.insert("nice", cpu_usage[1]);
+                usage_map.insert("system", cpu_usage[2]);
+                usage_map.insert("idle", cpu_usage[3]);
+                usage_map.insert("iowait", cpu_usage[4]);
+                usage_map.insert("irq", cpu_usage[5]);
+                usage_map.insert("softirq", cpu_usage[6]);
+                usage_map.insert("steal", cpu_usage[7]);
+                usage_map.insert("guest", cpu_usage[8]);
+                usage_map.insert("guest_nice", cpu_usage[9]);
+                result.insert("cpu_usage", to_value(&usage_map));
+            }
+
 
             serde_json::to_writer(res, &result).unwrap();
             try!(write!(res, "\n\n"));
             try!(res.flush());
-            sleep(Duration::from_secs(1));
+            sleep(Duration::from_millis(100));
         }
     }
 }
