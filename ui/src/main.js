@@ -2,8 +2,6 @@ require("babel/polyfill");
 
 require("expose?React!react");
 
-import Router from "react-router";
-
 
 // Redux utility functions
 import { compose, createStore, applyMiddleware } from 'redux';
@@ -49,26 +47,17 @@ let debugPanel = <DebugPanel top right bottom>
 </DebugPanel>;
 */
 
-
 window.onload = function () {
-	React.render(
+	ReactDOM.render(
 		<div>
 			<Provider store={store}>
-				{() => <TopApp />}
+				<TopApp />
 			</Provider>
 			{debugPanel}
 		</div>,
 		document.getElementById('application')
 	);
-	let getSystemMetrics = () => {
-		var oReq = new XMLHttpRequest();
-		oReq.addEventListener("load", function reqListener() {
-			let responseJson = JSON.parse(this.responseText);
-			store.dispatch({type: "RECEIVE_SYSTEM_METRICS", systemMetrics: responseJson});
-		});
-		oReq.open("GET", "api/system-metrics", true);
-		oReq.send();
-	};
+
 	let getSystemInfo = () => {
 		var oReq = new XMLHttpRequest();
 		oReq.addEventListener("load", function reqListener() {
@@ -87,7 +76,6 @@ window.onload = function () {
 	var evtSource = new EventSource("/api/system-metrics-events");
 	evtSource.addEventListener("metrics", function(e) {
 		var metrics = JSON.parse(e.data);
-        console.log(metrics);
 		store.dispatch({type: "RECEIVE_SYSTEM_METRICS", systemMetrics: metrics});
 	}, false);
 };

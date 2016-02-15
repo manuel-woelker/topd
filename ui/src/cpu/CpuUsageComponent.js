@@ -23,8 +23,8 @@ export default React.createClass({
 					<td>{toFixed(cpu_usage.system*100)} %</td>
 				</tr>
 				<tr>
-					<td>Idle:</td>
-					<td>{toFixed(cpu_usage.idle*100)} %</td>
+					<td>Other:</td>
+					<td>{toFixed(cpu_usage.other*100)} %</td>
 				</tr>
 				</tbody>
 			</Table>

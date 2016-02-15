@@ -94,7 +94,7 @@ impl WriteBody for MetricsEventStream {
             serde_json::to_writer(res, &result).unwrap();
             try!(write!(res, "\n\n"));
             try!(res.flush());
-            sleep(Duration::from_millis(100));
+            sleep(Duration::from_millis(500));
         }
     }
 }

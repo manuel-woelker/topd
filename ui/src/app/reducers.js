@@ -2,6 +2,11 @@ let initialState = {
 	systemMetrics: {
 		loadavg: {}
 	},
+	cpuHistory: {
+		system: [],
+		user: [],
+		other: []
+	},
 	systemInfo: {
 
 	}
@@ -9,7 +14,14 @@ let initialState = {
 
 
 function receiveSystemMetrics(state, action) {
-	return Object.assign({}, state, {systemMetrics: action.systemMetrics});
+	var cpuUsage = action.systemMetrics.cpu_usage;
+	cpuUsage.other = 1 - cpuUsage.system - cpuUsage.user - cpuUsage.idle;
+	let cpuHistory = {
+		user: state.cpuHistory.user.concat([cpuUsage.user]).slice(-10),
+		system: state.cpuHistory.system.concat([cpuUsage.system]).slice(-10),
+		other: state.cpuHistory.other.concat([cpuUsage.other]).slice(-10)
+	};
+	return Object.assign({}, state, {systemMetrics: action.systemMetrics, cpuHistory: cpuHistory});
 }
 
 function receiveSystemInfo(state, action) {
