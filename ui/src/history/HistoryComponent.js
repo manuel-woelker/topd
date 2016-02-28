@@ -8,12 +8,13 @@ export default React.createClass({
 		ctx.setTransform(1, 0, 0, 1, 0, 0);
 		var height = canvas.height;
 		var width = canvas.width;
-		ctx.clearRect(0, 0, width, height); // clear canvas
+		ctx.fillStyle = "#fff";
+		ctx.fillRect(0, 0, width, height); // clear canvas
 		var metrics = this.props.metrics;
 		let array = metrics[0].values;
 		let xScale = width / array.length;
 		let yScale = width;
-		ctx.lineWidth = 5 / Math.max(width, height);
+		ctx.lineWidth = 10 / Math.max(width, height);
 		this.scale = width / metrics[0].values.length-1;
 		ctx.translate(0, 0);
 		ctx.scale(this.scale, height);
@@ -64,8 +65,8 @@ export default React.createClass({
 
 
 	render() {
-		return <div style={{border: "1px solid grey", width: "800px", overflow: "hidden"}}>
-			<canvas ref="canvas" height="400" width="950"/>
+		return <div style={{border: "2px solid #eee", width: "800px", overflow: "hidden"}}>
+			<canvas ref="canvas" height="120" width="950"/>
 		</div>
 	}
 });

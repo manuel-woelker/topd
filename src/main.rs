@@ -31,6 +31,7 @@ use serde_json::value::to_value;
 pub mod sensors;
 
 use sensors::cpu::CpuSensor;
+use sensors::memory::MemorySensor;
 
 extern {
     pub fn gethostname(name: *mut c_char, size: size_t) -> c_int;
@@ -65,6 +66,7 @@ struct MetricsEventStream;
 impl WriteBody for MetricsEventStream {
     fn write_body(&mut self, res: &mut ResponseBody) -> Result<()> {
         let mut cpu_sensor = CpuSensor::new();
+        let memory_sensor = MemorySensor::new();
         loop {
             try!(write!(res, "event: metrics\ndata: "));
             let mut result = HashMap::new();
@@ -88,6 +90,15 @@ impl WriteBody for MetricsEventStream {
                 usage_map.insert("guest", cpu_usage[8]);
                 usage_map.insert("guest_nice", cpu_usage[9]);
                 result.insert("cpu_usage", to_value(&usage_map));
+            }
+
+            if let Some(memory_usage) = memory_sensor.measure() {
+                let mut usage_map = HashMap::new();
+                usage_map.insert("used", memory_usage.used);
+                usage_map.insert("buffers", memory_usage.buffers);
+                usage_map.insert("cache", memory_usage.cache);
+                usage_map.insert("swap", memory_usage.swap);
+                result.insert("memory_usage", to_value(&usage_map));
             }
 
 

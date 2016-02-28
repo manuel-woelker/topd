@@ -4,6 +4,7 @@ import {Navbar, Nav, NavbarBrand, NavItem, Grid, Row} from "react-bootstrap";
 
 import LoadAvgComponent from "../load/LoadAvgComponent.js";
 import CpuUsageComponent from "../cpu/CpuUsageComponent.js";
+import MemoryUsageComponent from "../memory/MemoryUsageComponent.js";
 import HistoryComponent from "../history/HistoryComponent.js";
 
 
@@ -19,6 +20,21 @@ export default connect(state => state)(React.createClass({
 			},	{
 				strokeStyle: "#76772a",
 				values: this.props.cpuHistory.other
+			}
+		];
+		var memoryMetrics = [
+			{
+				strokeStyle: "#0d551c",
+				values: this.props.memoryHistory.used
+			},	{
+				strokeStyle: "#0d3c55",
+				values: this.props.memoryHistory.buffers
+			},	{
+				strokeStyle: "#76772a",
+				values: this.props.memoryHistory.cache
+			},	{
+				strokeStyle: "#c02e1d",
+				values: this.props.memoryHistory.swap
 			}
 		];
 		var loadMetrics = [
@@ -39,6 +55,12 @@ export default connect(state => state)(React.createClass({
 						<HistoryComponent metrics={cpuMetrics}/>
 						<LoadAvgComponent loadavg={this.props.systemMetrics.loadavg}/>
 						<HistoryComponent metrics={loadMetrics}/>
+						<MemoryUsageComponent memoryUsage={this.props.systemMetrics.memory_usage} />
+						<HistoryComponent metrics={memoryMetrics}/>
+						<MemoryUsageComponent memoryUsage={this.props.systemMetrics.memory_usage} />
+						<HistoryComponent metrics={memoryMetrics}/>
+						<MemoryUsageComponent memoryUsage={this.props.systemMetrics.memory_usage} />
+						<HistoryComponent metrics={memoryMetrics}/>
 					</Row>
 				</Grid>
 			</div>
