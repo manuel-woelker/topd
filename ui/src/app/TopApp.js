@@ -20,7 +20,12 @@ export default connect(state => state)(React.createClass({
 				strokeStyle: "#76772a",
 				values: this.props.cpuHistory.other
 			}
-
+		];
+		var loadMetrics = [
+			{
+				strokeStyle: "#0d551c",
+				values: this.props.loadHistory
+			}
 		];
 		return <div>
 			<Navbar fluid>
@@ -37,6 +42,8 @@ export default connect(state => state)(React.createClass({
 						<CpuUsageComponent cpu_usage={this.props.systemMetrics.cpu_usage}/>
 						<h2>CPU History</h2>
 						<HistoryComponent metrics={cpuMetrics}/>
+						<h2>Load History</h2>
+						<HistoryComponent metrics={loadMetrics}/>
 					</Row>
 				</Grid>
 			</div>

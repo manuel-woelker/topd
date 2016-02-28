@@ -2,6 +2,7 @@ let initialState = {
 	systemMetrics: {
 		loadavg: {}
 	},
+	loadHistory: [],
 	cpuHistory: {
 		system: [],
 		user: [],
@@ -21,7 +22,8 @@ function receiveSystemMetrics(state, action) {
 		system: state.cpuHistory.system.concat([cpuUsage.system]).slice(-10),
 		other: state.cpuHistory.other.concat([cpuUsage.other]).slice(-10)
 	};
-	return Object.assign({}, state, {systemMetrics: action.systemMetrics, cpuHistory: cpuHistory});
+	let loadHistory = state.loadHistory.concat([action.systemMetrics.loadavg.load_avg_1_min/10]).slice(-10);
+	return Object.assign({}, state, {systemMetrics: action.systemMetrics, cpuHistory: cpuHistory, loadHistory, loadHistory});
 }
 
 function receiveSystemInfo(state, action) {
