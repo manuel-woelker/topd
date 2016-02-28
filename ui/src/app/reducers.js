@@ -4,9 +4,9 @@ let initialState = {
 	},
 	loadHistory: [],
 	cpuHistory: {
-		system: [],
-		user: [],
-		other: []
+		system: new Array(30),
+		user: new Array(30),
+		other: new Array(30)
 	},
 	systemInfo: {
 

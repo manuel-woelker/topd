@@ -30,19 +30,14 @@ export default connect(state => state)(React.createClass({
 		return <div>
 			<Navbar fluid>
 				<NavbarBrand><a href="#">topd <b>{this.props.systemInfo.hostname}</b></a></NavbarBrand>
-				<Nav>
-					<NavItem eventKey={1} href='#'>Refresh</NavItem>
-				</Nav>
 			</Navbar>
 
 			<div style={{padding: "20px", paddingTop: 0}}>
 				<Grid fluid>
 					<Row>
-						<LoadAvgComponent loadavg={this.props.systemMetrics.loadavg}/>
 						<CpuUsageComponent cpu_usage={this.props.systemMetrics.cpu_usage}/>
-						<h2>CPU History</h2>
 						<HistoryComponent metrics={cpuMetrics}/>
-						<h2>Load History</h2>
+						<LoadAvgComponent loadavg={this.props.systemMetrics.loadavg}/>
 						<HistoryComponent metrics={loadMetrics}/>
 					</Row>
 				</Grid>

@@ -11,23 +11,13 @@ export default React.createClass({
 	render() {
 		let loadavg = this.props.loadavg || {};
 		return <div>
-			<h2>Load average</h2>
-			<Table striped bordered condensed hover style={{width: 200}}>
-				<tbody>
-				<tr>
-					<td>1 minute:</td>
-					<td>{toFixed(loadavg.load_avg_1_min)}</td>
-				</tr>
-				<tr>
-					<td>5 minutes:</td>
-					<td>{toFixed(loadavg.load_avg_5_min)}</td>
-				</tr>
-				<tr>
-					<td>10 minutes:</td>
-					<td>{toFixed(loadavg.load_avg_10_min)}</td>
-				</tr>
-				</tbody>
-			</Table>
-		</div>
+			<div style={{width: 200, fontSize: "32px", display: "inline-block"}}>Load Average</div>
+			<div style={{display: "inline-block", width: 100, color: "#0d551c", fontWeight: "bold", textAlign: "right"}}>{toFixed(loadavg.load_avg_1_min)}</div>
+			<div style={{display: "inline-block", width: 100}}>&nbsp;(1 min)</div>
+			<div style={{display: "inline-block", width: 100, color: "#888", fontWeight: "bold", textAlign: "right"}}>{toFixed(loadavg.load_avg_5_min)}</div>
+			<div style={{display: "inline-block", width: 100}}>&nbsp;(5 min)</div>
+			<div style={{display: "inline-block", width: 100, color: "#888", fontWeight: "bold", textAlign: "right"}}>{toFixed(loadavg.load_avg_10_min)}</div>
+			<div style={{display: "inline-block", width: 100}}>&nbsp;(10 min)</div>
+		</div>;
 	}
 });
