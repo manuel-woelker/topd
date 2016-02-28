@@ -2,7 +2,7 @@ let initialState = {
 	systemMetrics: {
 		loadavg: {}
 	},
-	loadHistory: [],
+	loadHistory: new Array(30),
 	cpuHistory: {
 		system: new Array(30),
 		user: new Array(30),
@@ -12,6 +12,11 @@ let initialState = {
 
 	}
 };
+
+initialState.loadHistory.fill(0);
+initialState.cpuHistory.user.fill(0);
+initialState.cpuHistory.system.fill(0);
+initialState.cpuHistory.other.fill(0);
 
 const HISTORY_SIZE = 30;
 

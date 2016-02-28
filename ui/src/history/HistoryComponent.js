@@ -58,7 +58,6 @@ export default React.createClass({
 	},
 
 	componentDidMount() {
-		console.log("mount");
 		this.canvas = ReactDOM.findDOMNode(this.refs.canvas);
 		window.requestAnimationFrame(this.scroll);
 	},
