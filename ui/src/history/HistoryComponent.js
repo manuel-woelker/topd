@@ -2,6 +2,7 @@ import {Table, Button} from "react-bootstrap";
 
 export default React.createClass({
 	paintCanvas() {
+		this.painted = true;
 		var canvas = ReactDOM.findDOMNode(this.refs.canvas);
 		var ctx = canvas.getContext('2d');
 		ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -9,16 +10,18 @@ export default React.createClass({
 		var width = canvas.width;
 		ctx.clearRect(0, 0, width, height); // clear canvas
 		var metrics = this.props.metrics;
-        let array = metrics[0].values;
+		let array = metrics[0].values;
 		let xScale = width / array.length;
 		let yScale = width;
 		ctx.lineWidth = 5 / Math.max(width, height);
-		ctx.scale(width / 8, height);
+		this.scale = width / metrics[0].values.length-1;
+		ctx.translate(0, 0);
+		ctx.scale(this.scale, height);
 		ctx.translate(0, 1);
 		ctx.translate(-1, 0);
 		ctx.scale(1, -1);
 
-		for(var i = 0; i < metrics.length; i++) {
+		for (var i = 0; i < metrics.length; i++) {
 			var metric = metrics[i];
 			ctx.strokeStyle = metric.strokeStyle;
 			drawLine(metric.values);
@@ -42,9 +45,28 @@ export default React.createClass({
 		this.paintCanvas()
 	},
 
+	scroll(totalTimeMs) {
+		if(this.painted) {
+			this.painted = false;
+			this.lastUpdateTime = totalTimeMs;
+		}
+		var elapsedTime = totalTimeMs - this.lastUpdateTime;
+		var pixelMove = -elapsedTime*this.scale/500;
+		this.canvas.style.left = pixelMove + "px";
+		this.canvas.style.position = "relative";
+		window.requestAnimationFrame(this.scroll);
+	},
+
+	componentDidMount() {
+		console.log("mount");
+		this.canvas = ReactDOM.findDOMNode(this.refs.canvas);
+		window.requestAnimationFrame(this.scroll);
+	},
+
+
 	render() {
-		return <div>
-			<canvas ref="canvas" style={{border: "1px solid grey"}} height="400" width="800"/>
+		return <div style={{border: "1px solid grey", width: "800px", overflow: "hidden"}}>
+			<canvas ref="canvas" height="400" width="950"/>
 		</div>
 	}
 });

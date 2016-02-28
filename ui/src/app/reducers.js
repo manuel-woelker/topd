@@ -13,16 +13,17 @@ let initialState = {
 	}
 };
 
+const HISTORY_SIZE = 30;
 
 function receiveSystemMetrics(state, action) {
 	var cpuUsage = action.systemMetrics.cpu_usage;
 	cpuUsage.other = 1 - cpuUsage.system - cpuUsage.user - cpuUsage.idle;
 	let cpuHistory = {
-		user: state.cpuHistory.user.concat([cpuUsage.user]).slice(-10),
-		system: state.cpuHistory.system.concat([cpuUsage.system]).slice(-10),
-		other: state.cpuHistory.other.concat([cpuUsage.other]).slice(-10)
+		user: state.cpuHistory.user.concat([cpuUsage.user]).slice(-HISTORY_SIZE),
+		system: state.cpuHistory.system.concat([cpuUsage.system]).slice(-HISTORY_SIZE),
+		other: state.cpuHistory.other.concat([cpuUsage.other]).slice(-HISTORY_SIZE)
 	};
-	let loadHistory = state.loadHistory.concat([action.systemMetrics.loadavg.load_avg_1_min/10]).slice(-10);
+	let loadHistory = state.loadHistory.concat([action.systemMetrics.loadavg.load_avg_1_min/10]).slice(-HISTORY_SIZE);
 	return Object.assign({}, state, {systemMetrics: action.systemMetrics, cpuHistory: cpuHistory, loadHistory, loadHistory});
 }
 
