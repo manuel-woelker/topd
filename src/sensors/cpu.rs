@@ -1,5 +1,5 @@
 
-use time::{Duration, PreciseTime};
+use time::{PreciseTime};
 use std::io;
 use std::io::prelude::*;
 use std::fs::File;
@@ -29,10 +29,10 @@ impl CpuSensor {
 	}
 
 	pub fn measure(&mut self) -> Option<CpuUsage> {
-		let mut f = File::open("/proc/stat").unwrap();
-		let mut f = io::BufReader::new(f);
+		let file = File::open("/proc/stat").unwrap();
+		let mut reader = io::BufReader::new(file);
 		let mut line = String::new();
-		f.read_line(&mut line);
+		reader.read_line(&mut line).unwrap();
 		let current_measurement: Vec<u64> = line.split_whitespace().skip(1).map(|s| s.parse::<u64>().unwrap()).collect();
 		let mut delta = [0u64; 10];
 		let mut sum = 0f32;
