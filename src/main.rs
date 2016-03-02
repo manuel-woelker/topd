@@ -131,7 +131,7 @@ fn main() {
 
         Ok(Response::with((status::Ok, mime!(Application/Json), result)))
     });
-    Iron::new(mount).http("localhost:3000").unwrap();
+    Iron::new(mount).http("0.0.0.0:3000").unwrap();
 
 /*	let mut server = Nickel::new();
 	let mut router = Nickel::router();
