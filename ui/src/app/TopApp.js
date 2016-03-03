@@ -5,6 +5,8 @@ import {Navbar, Nav, NavbarBrand, NavItem, Grid, Row} from "react-bootstrap";
 import LoadAvgComponent from "../load/LoadAvgComponent.js";
 import CpuUsageComponent from "../cpu/CpuUsageComponent.js";
 import MemoryUsageComponent from "../memory/MemoryUsageComponent.js";
+import NetUsageComponent from "../net/NetUsageComponent.js";
+
 import HistoryComponent from "../history/HistoryComponent.js";
 
 
@@ -37,6 +39,16 @@ export default connect(state => state)(React.createClass({
 				values: this.props.memoryHistory.swap
 			}
 		];
+		var netMaxValue = this.props.netHistory.max;
+		var netMetrics = [
+			{
+				strokeStyle: "#0d3c55",
+				values: this.props.netHistory.recv.map((x) => x/netMaxValue)
+			},	{
+				strokeStyle: "#c02e1d",
+				values: this.props.netHistory.send.map((x) => x/netMaxValue)
+			}
+		];
 		var loadMetrics = [
 			{
 				strokeStyle: "#0d551c",
@@ -57,8 +69,8 @@ export default connect(state => state)(React.createClass({
 						<HistoryComponent metrics={loadMetrics}/>
 						<MemoryUsageComponent memoryUsage={this.props.systemMetrics.memory_usage} />
 						<HistoryComponent metrics={memoryMetrics}/>
-						<MemoryUsageComponent memoryUsage={this.props.systemMetrics.memory_usage} />
-						<HistoryComponent metrics={memoryMetrics}/>
+						<NetUsageComponent netUsage={this.props.systemMetrics.net_usage} />
+						<HistoryComponent metrics={netMetrics}/>
 						<MemoryUsageComponent memoryUsage={this.props.systemMetrics.memory_usage} />
 						<HistoryComponent metrics={memoryMetrics}/>
 					</Row>
@@ -68,3 +80,6 @@ export default connect(state => state)(React.createClass({
 
 	}
 }));
+
+
+

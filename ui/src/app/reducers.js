@@ -17,9 +17,12 @@ let initialState = {
 		cache: new Array(HISTORY_SIZE),
 		swap: new Array(HISTORY_SIZE)
 	},
-	systemInfo: {
-
-	}
+	netHistory: {
+		send: new Array(HISTORY_SIZE),
+		recv: new Array(HISTORY_SIZE),
+		max: 10
+	},
+	systemInfo: {}
 };
 
 initialState.loadHistory.fill(0);
@@ -30,6 +33,9 @@ initialState.memoryHistory.used.fill(0);
 initialState.memoryHistory.buffers.fill(0);
 initialState.memoryHistory.cache.fill(0);
 initialState.memoryHistory.swap.fill(0);
+
+initialState.netHistory.send.fill(0);
+initialState.netHistory.recv.fill(0);
 
 
 function receiveSystemMetrics(state, action) {
@@ -47,15 +53,29 @@ function receiveSystemMetrics(state, action) {
 		cache: state.memoryHistory.cache.concat([memoryUsage.cache]).slice(-HISTORY_SIZE),
 		swap: state.memoryHistory.swap.concat([memoryUsage.swap]).slice(-HISTORY_SIZE)
 	};
-	let loadHistory = state.loadHistory.concat([action.systemMetrics.loadavg.load_avg_1_min/10]).slice(-HISTORY_SIZE);
-	return Object.assign({}, state, {systemMetrics: action.systemMetrics, cpuHistory: cpuHistory, loadHistory, memoryHistory});
+	var netUsage = action.systemMetrics.net_usage;
+	var netHistory = state.netHistory;
+	if (netUsage) {
+		let netMaxValue = Math.max(state.netHistory.max, Math.max(netUsage.send, netUsage.recv));
+		netHistory = {
+			send: state.netHistory.send.concat([netUsage.send]).slice(-HISTORY_SIZE),
+			recv: state.netHistory.recv.concat([netUsage.recv]).slice(-HISTORY_SIZE),
+			max: netMaxValue
+		};
+	}
+	let loadHistory = state.loadHistory.concat([action.systemMetrics.loadavg.load_avg_1_min / 10]).slice(-HISTORY_SIZE);
+	return Object.assign({}, state, {
+		systemMetrics: action.systemMetrics,
+		cpuHistory: cpuHistory,
+		loadHistory,
+		memoryHistory,
+		netHistory
+	});
 }
 
 function receiveSystemInfo(state, action) {
 	return Object.assign({}, state, {systemInfo: action.systemInfo});
 }
-
-
 
 
 function reducer(state = initialState, action = {}) {

@@ -18,13 +18,16 @@ use iron::response::{ResponseBody, WriteBody};
 use iron::status;
 use mount::Mount;
 
+use time::{PreciseTime};
+
 use std::collections::HashMap;
 use std::io::Write;
 use std::thread::sleep;
 
 use libc::{c_char,c_int,size_t};
-use std::time::Duration;
 use std::iter::repeat;
+use std::time::Duration;
+use std::cmp;
 use std::io::{Error,ErrorKind,Result};
 use serde_json::value::to_value;
 
@@ -32,12 +35,14 @@ pub mod sensors;
 
 use sensors::cpu::CpuSensor;
 use sensors::memory::MemorySensor;
+use sensors::net::NetSensor;
 
 extern {
     pub fn gethostname(name: *mut c_char, size: size_t) -> c_int;
 }
 
-
+const INDEX_HTML:&'static str = include_str!("../ui/src/index.html");
+const BUNDLE_JS:&'static str = include_str!("../ui/target/dist/bundle.js");
 
 /// Calls `gethostname`
 pub fn hostname() -> Result<String> {
@@ -67,7 +72,9 @@ impl WriteBody for MetricsEventStream {
     fn write_body(&mut self, res: &mut ResponseBody) -> Result<()> {
         let mut cpu_sensor = CpuSensor::new();
         let memory_sensor = MemorySensor::new();
+        let mut net_sensor = NetSensor::new();
         loop {
+            let start_time = PreciseTime::now();
             try!(write!(res, "event: metrics\ndata: "));
             let mut result = HashMap::new();
             let mut loadavg_map = HashMap::new();
@@ -100,12 +107,20 @@ impl WriteBody for MetricsEventStream {
                 usage_map.insert("swap", memory_usage.swap);
                 result.insert("memory_usage", to_value(&usage_map));
             }
+            if let Some(net_usage) = net_sensor.measure() {
+                let mut usage_map = HashMap::new();
+                usage_map.insert("recv", net_usage.recv);
+                usage_map.insert("send", net_usage.send);
+                result.insert("net_usage", to_value(&usage_map));
+            }
 
 
             serde_json::to_writer(res, &result).unwrap();
             try!(write!(res, "\n\n"));
             try!(res.flush());
-            sleep(Duration::from_millis(500));
+            let end_time = PreciseTime::now();
+            let time_to_sleep = cmp::max(100, 500-start_time.to(end_time).num_milliseconds());
+            sleep(Duration::from_millis(time_to_sleep as u64));
         }
     }
 }
@@ -116,6 +131,9 @@ fn main() {
     println!("Listening on http://localhost:3000/");
 
     let mut mount = Mount::new();
+    mount.mount("/bundle.js", |_: &mut Request| {
+        Ok(Response::with((status::Ok, mime!(Text/Html), BUNDLE_JS)))
+    });
     mount.mount("/api/system-metrics-events", |_: &mut Request| {
         let stream = MetricsEventStream;
         let boxed_stream: Box<WriteBody + Send> = Box::new(stream);
@@ -130,6 +148,9 @@ fn main() {
         let result = serde_json::to_string(&result).unwrap();
 
         Ok(Response::with((status::Ok, mime!(Application/Json), result)))
+    });
+    mount.mount("/", |_: &mut Request| {
+        Ok(Response::with((status::Ok, mime!(Text/Html), INDEX_HTML)))
     });
     Iron::new(mount).http("0.0.0.0:3000").unwrap();
 

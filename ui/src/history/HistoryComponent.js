@@ -20,7 +20,7 @@ export default React.createClass({
 		ctx.scale(this.scale, height);
 		ctx.translate(0, 1);
 		ctx.translate(-1, 0);
-		ctx.scale(1, -1);
+		ctx.scale(1, -0.98);
 
 		for (var i = 0; i < metrics.length; i++) {
 			var metric = metrics[i];
