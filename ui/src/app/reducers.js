@@ -22,6 +22,10 @@ let initialState = {
 		recv: new Array(HISTORY_SIZE),
 		max: 10
 	},
+	diskHistory: {
+		_max: 10,
+		disks: {}
+	},
 	systemInfo: {}
 };
 
@@ -63,13 +67,33 @@ function receiveSystemMetrics(state, action) {
 			max: netMaxValue
 		};
 	}
+	var diskUsage = action.systemMetrics.disk_usage || {};
+	var oldDiskHistory = state.diskHistory;
+	let netMaxValue = oldDiskHistory._max;
+	for(var disk in diskUsage) {
+		let value = diskUsage[disk];
+		netMaxValue = Math.max(netMaxValue, value);
+	}
+	let diskHistory = {
+		_max: netMaxValue,
+		disks: {}
+	};
+	for(var disk in diskUsage) {
+		let value = diskUsage[disk];
+		var history = oldDiskHistory.disks[disk];
+		if (!history) {
+			history = new Array(HISTORY_SIZE);
+		}
+		diskHistory.disks[disk] = history.concat([value]).slice(-HISTORY_SIZE);
+	}
 	let loadHistory = state.loadHistory.concat([action.systemMetrics.loadavg.load_avg_1_min / 10]).slice(-HISTORY_SIZE);
 	return Object.assign({}, state, {
 		systemMetrics: action.systemMetrics,
 		cpuHistory: cpuHistory,
 		loadHistory,
 		memoryHistory,
-		netHistory
+		netHistory,
+		diskHistory
 	});
 }
 

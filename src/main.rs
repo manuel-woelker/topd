@@ -36,7 +36,7 @@ pub mod sensors;
 use sensors::cpu::CpuSensor;
 use sensors::memory::MemorySensor;
 use sensors::net::NetSensor;
-
+use sensors::disk::DiskSensor;
 extern {
     pub fn gethostname(name: *mut c_char, size: size_t) -> c_int;
 }
@@ -73,6 +73,7 @@ impl WriteBody for MetricsEventStream {
         let mut cpu_sensor = CpuSensor::new();
         let memory_sensor = MemorySensor::new();
         let mut net_sensor = NetSensor::new();
+        let mut disk_sensor = DiskSensor::new();
         loop {
             let start_time = PreciseTime::now();
             try!(write!(res, "event: metrics\ndata: "));
@@ -113,6 +114,8 @@ impl WriteBody for MetricsEventStream {
                 usage_map.insert("send", net_usage.send);
                 result.insert("net_usage", to_value(&usage_map));
             }
+            let disk_usage = disk_sensor.measure();
+            result.insert("disk_usage", to_value(&disk_usage));
 
 
             serde_json::to_writer(res, &result).unwrap();

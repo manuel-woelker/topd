@@ -6,6 +6,7 @@ import LoadAvgComponent from "../load/LoadAvgComponent.js";
 import CpuUsageComponent from "../cpu/CpuUsageComponent.js";
 import MemoryUsageComponent from "../memory/MemoryUsageComponent.js";
 import NetUsageComponent from "../net/NetUsageComponent.js";
+import DiskUsageComponent from "../disk/DiskUsageComponent.js";
 
 import HistoryComponent from "../history/HistoryComponent.js";
 
@@ -49,6 +50,20 @@ export default connect(state => state)(React.createClass({
 				values: this.props.netHistory.send.map((x) => x/netMaxValue)
 			}
 		];
+
+		var diskHistory = this.props.diskHistory;
+        var diskMaxValue = diskHistory._max;
+		var diskMetrics = [];
+		for(var disk in diskHistory.disks) {
+			let values = diskHistory.disks[disk];
+			diskMetrics.push({
+				disk: disk,
+				strokeStyle: "#c02e1d",
+				values: values.map((x) => x/diskMaxValue)
+			})
+		}
+
+
 		var loadMetrics = [
 			{
 				strokeStyle: "#0d551c",
@@ -71,8 +86,8 @@ export default connect(state => state)(React.createClass({
 						<HistoryComponent metrics={memoryMetrics}/>
 						<NetUsageComponent netUsage={this.props.systemMetrics.net_usage} />
 						<HistoryComponent metrics={netMetrics}/>
-						<MemoryUsageComponent memoryUsage={this.props.systemMetrics.memory_usage} />
-						<HistoryComponent metrics={memoryMetrics}/>
+						<DiskUsageComponent diskUsage={this.props.systemMetrics.disk_usage} />
+						<HistoryComponent metrics={diskMetrics}/>
 					</Row>
 				</Grid>
 			</div>

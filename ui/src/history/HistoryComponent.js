@@ -11,6 +11,9 @@ export default React.createClass({
 		ctx.fillStyle = "#fff";
 		ctx.fillRect(0, 0, width, height); // clear canvas
 		var metrics = this.props.metrics;
+		if(!metrics || !metrics.length) {
+			return;
+		}
 		let array = metrics[0].values;
 		let xScale = width / array.length;
 		let yScale = width;
