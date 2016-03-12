@@ -1,3 +1,25 @@
 body {
 	background-color: #f8f8f8;
 }
+
+.processes thead, .processes tr {
+	width: 100%;
+}
+
+.processes td:nth-child(1), .processes th:nth-child(1) {
+	width: 10%;
+}
+.processes td:nth-child(2), .processes th:nth-child(2) {
+	width: 50%;
+}
+.processes td:nth-child(3), .processes th:nth-child(3) {
+	width: 20%;
+	text-align: right
+}
+.processes td:nth-child(4), .processes th:nth-child(4) {
+	width: 20%;
+	text-align: right
+}
+
+
+
