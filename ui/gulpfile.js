@@ -75,7 +75,7 @@ gulp.task('build', function (callback) {
 		 new webpack.optimize.DedupePlugin(),
 		 new webpack.optimize.UglifyJsPlugin()*/
 	);
-	productionConfig.output.path = "target/dist";
+	productionConfig.output.path = "../src/assets";
 	productionConfig.output.publicPath =  "./";
 	productionConfig.debug = false;
 	productionConfig.devtool = "";

@@ -43,7 +43,7 @@ extern {
 }
 
 const INDEX_HTML:&'static str = include_str!("../ui/src/index.html");
-const BUNDLE_JS:&'static str = include_str!("../ui/target/dist/bundle.js");
+const BUNDLE_JS:&'static str = include_str!("assets/bundle.js");
 
 const VERSION: Option<&'static str> = option_env!("CARGO_PKG_VERSION");
 /// Calls `gethostname`
