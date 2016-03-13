@@ -1,6 +1,6 @@
 [package]
 name = "topd"
-version = "1.0.0-pre"
+version = "1.0.0"
 authors = ["Manuel Woelker <github@manuel.woelker.org>"]
 
 [dependencies]
