@@ -73,7 +73,7 @@ export default connect(state => state)(React.createClass({
 		];
 		return <div>
 			<Navbar fluid>
-				<NavbarBrand><a href="#">topd <b>{this.props.systemInfo.hostname}</b></a></NavbarBrand>
+				<NavbarBrand><a href="#"><b>{this.props.systemInfo.hostname}</b><span style={{display: "inline-block", width: 40}}/>topd <span className="text-muted">{this.props.systemInfo.version} </span></a></NavbarBrand>
 			</Navbar>
 
 			<div style={{padding: "20px", paddingTop: 0}}>
@@ -101,7 +101,3 @@ export default connect(state => state)(React.createClass({
 
 	}
 }));
-
-
-
-

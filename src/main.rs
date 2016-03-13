@@ -45,6 +45,7 @@ extern {
 const INDEX_HTML:&'static str = include_str!("../ui/src/index.html");
 const BUNDLE_JS:&'static str = include_str!("../ui/target/dist/bundle.js");
 
+const VERSION: Option<&'static str> = option_env!("CARGO_PKG_VERSION");
 /// Calls `gethostname`
 pub fn hostname() -> Result<String> {
     // Create a buffer for the hostname to be copied into
@@ -76,6 +77,7 @@ impl WriteBody for MetricsEventStream {
         let mut net_sensor = NetSensor::new();
         let mut disk_sensor = DiskSensor::new();
         let mut processes_sensor = ProcessesSensor::new();
+        let mut iteration_counter = 0u64;
         loop {
             let start_time = PreciseTime::now();
             try!(write!(res, "event: metrics\ndata: "));
@@ -118,18 +120,19 @@ impl WriteBody for MetricsEventStream {
             }
             let disk_usage = disk_sensor.measure();
             result.insert("disk_usage", to_value(&disk_usage));
-
-            let processes = processes_sensor.measure();
-            let mut process_list = Vec::new();
-            for process in processes {
-                let mut map = HashMap::new();
-                map.insert("pid", to_value(&process.pid));
-                map.insert("cpu", to_value(&process.cpu));
-                map.insert("rss", to_value(&process.rss));
-                map.insert("cmd", to_value(&process.cmd));
-                process_list.push(map);
+            if iteration_counter % 10 == 0 {
+                let processes = processes_sensor.measure();
+                let mut process_list = Vec::new();
+                for process in processes {
+                    let mut map = HashMap::new();
+                    map.insert("pid", to_value(&process.pid));
+                    map.insert("cpu", to_value(&process.cpu));
+                    map.insert("rss", to_value(&process.rss));
+                    map.insert("cmd", to_value(&process.cmd));
+                    process_list.push(map);
+                }
+                result.insert("processes", to_value(&process_list));
             }
-            result.insert("processes", to_value(&process_list));
 
             serde_json::to_writer(res, &result).unwrap();
             try!(write!(res, "\n\n"));
@@ -137,6 +140,7 @@ impl WriteBody for MetricsEventStream {
             let end_time = PreciseTime::now();
             let time_to_sleep = cmp::max(100, 500-start_time.to(end_time).num_milliseconds());
             sleep(Duration::from_millis(time_to_sleep as u64));
+            iteration_counter+=1;
         }
     }
 }
@@ -144,6 +148,7 @@ impl WriteBody for MetricsEventStream {
 unsafe impl Send for MetricsEventStream {}
 
 fn main() {
+    println!("topd v{}", VERSION.unwrap_or("?"));
     println!("Listening on http://localhost:3000/");
 
     let mut mount = Mount::new();
@@ -161,6 +166,7 @@ fn main() {
         let mut result = HashMap::new();
         result.insert("numberOfCpus", to_value(&num_cpus::get()));
         let _ = hostname().map(|hostname| result.insert("hostname", to_value(&hostname)));
+        result.insert("version", to_value(&VERSION.unwrap_or("unknown")));
         let result = serde_json::to_string(&result).unwrap();
 
         Ok(Response::with((status::Ok, mime!(Application/Json), result)))
@@ -170,33 +176,4 @@ fn main() {
     });
     Iron::new(mount).http("0.0.0.0:3000").unwrap();
 
-/*	let mut server = Nickel::new();
-	let mut router = Nickel::router();
-
-	router.get("/api/system-info", middleware! { |_, mut response|
-		response.set(MediaType::Json);
-		let mut result = HashMap::new();
-		result.insert("numberOfCpus", to_value(&num_cpus::get()));
-		let _ = hostname().map(|hostname| result.insert("hostname", to_value(&hostname)));
-		serde_json::to_string(&result).unwrap()
-	});
-
-	router.get("/api/system-metrics", middleware! { |_, mut response|
-		response.set(MediaType::Json);
-		let loadavg = procinfo::loadavg().unwrap();
-		let mut result = HashMap::new();
-		let mut loadavg_map = HashMap::new();
-		loadavg_map.insert("load_avg_1_min", loadavg.load_avg_1_min);
-		loadavg_map.insert("load_avg_5_min", loadavg.load_avg_5_min);
-		loadavg_map.insert("load_avg_10_min", loadavg.load_avg_10_min);
-		result.insert("loadavg", loadavg_map);
-		serde_json::to_string(&result).unwrap()
-	});
-
-	server.utilize(router);
-	server.utilize(StaticFilesHandler::new("target/doc/"));
-//	  server.get("**", middleware!("Hello World"));
-	server.listen("127.0.0.1:3000");
-	println!("Listening on http://localhost:3000/");
-    */
 }

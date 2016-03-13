@@ -87,6 +87,9 @@ function receiveSystemMetrics(state, action) {
 		diskHistory.disks[disk] = history.concat([value]).slice(-HISTORY_SIZE);
 	}
 	let loadHistory = state.loadHistory.concat([action.systemMetrics.loadavg.load_avg_1_min / 10]).slice(-HISTORY_SIZE);
+	if(!action.systemMetrics.processes) {
+		action.systemMetrics.processes = state.systemMetrics.processes;
+	}
 	return Object.assign({}, state, {
 		systemMetrics: action.systemMetrics,
 		cpuHistory: cpuHistory,
