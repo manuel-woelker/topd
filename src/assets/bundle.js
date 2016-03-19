@@ -41628,7 +41628,7 @@
 	var _reactBootstrap = __webpack_require__(244);
 
 	function toFixed(input) {
-		if (!input || !input.toFixed) {
+		if (input !== 0 && (!input || !input.toFixed)) {
 			return input;
 		}
 		return input.toFixed(2);
@@ -41700,10 +41700,10 @@
 	var _reactBootstrap = __webpack_require__(244);
 
 	function toFixed(input) {
-		if (!input || !input.toFixed) {
+		if (input !== 0 && (!input || !input.toFixed)) {
 			return input;
 		}
-		return input.toFixed(2);
+		return input.toFixed(1);
 	}
 
 	exports["default"] = React.createClass({
@@ -41775,10 +41775,10 @@
 	var _reactBootstrap = __webpack_require__(244);
 
 	function toFixed(input) {
-		if (!input || !input.toFixed) {
+		if (input !== 0 && (!input || !input.toFixed)) {
 			return input;
 		}
-		return input.toFixed(2);
+		return input.toFixed(1);
 	}
 
 	exports["default"] = React.createClass({
@@ -42106,8 +42106,8 @@
 				"div",
 				null,
 				React.createElement(
-					"h2",
-					null,
+					"div",
+					{ style: { fontSize: "32px" } },
 					"Processes"
 				),
 				React.createElement(
@@ -42166,8 +42166,10 @@
 									),
 									React.createElement(
 										"td",
-										null,
-										process.cmd
+										{ title: process.cmdline },
+										process.cmd,
+										process.cmdline ? " - " : "",
+										process.cmdline
 									),
 									React.createElement(
 										"td",
@@ -42232,7 +42234,8 @@
 			_max: 10,
 			disks: {}
 		},
-		systemInfo: {}
+		systemInfo: {},
+		cmdlines: {}
 	};
 
 	initialState.loadHistory.fill(0);
@@ -42250,7 +42253,7 @@
 	function receiveSystemMetrics(state, action) {
 		var cpuUsage = action.systemMetrics.cpu_usage;
 		var memoryUsage = action.systemMetrics.memory_usage;
-		cpuUsage.other = 1 - cpuUsage.system - cpuUsage.user - cpuUsage.idle;
+		cpuUsage.other = Math.max(0, 1 - cpuUsage.system - cpuUsage.user - cpuUsage.idle);
 		var cpuHistory = {
 			user: state.cpuHistory.user.concat([cpuUsage.user]).slice(-HISTORY_SIZE),
 			system: state.cpuHistory.system.concat([cpuUsage.system]).slice(-HISTORY_SIZE),
@@ -42295,8 +42298,19 @@
 		if (!action.systemMetrics.processes) {
 			action.systemMetrics.processes = state.systemMetrics.processes;
 		}
+		var processes = action.systemMetrics.processes;
+		var cmdlines = state.cmdlines;
+		for (var i in processes) {
+			var _process = processes[i];
+			if (_process.cmdline) {
+				cmdlines[_process.pid] = _process.cmdline;
+			} else {
+				_process.cmdline = cmdlines[_process.pid] || "?";
+			}
+		}
 		return Object.assign({}, state, {
 			systemMetrics: action.systemMetrics,
+			cmdlines: cmdlines,
 			cpuHistory: cpuHistory,
 			loadHistory: loadHistory,
 			memoryHistory: memoryHistory,
@@ -47715,7 +47729,7 @@
 
 
 	// module
-	exports.push([module.id, "body {\n\tbackground-color: #f8f8f8;\n}\n\n.processes thead, .processes tr {\n\twidth: 100%;\n}\n\n.processes td:nth-child(1), .processes th:nth-child(1) {\n\twidth: 10%;\n}\n.processes td:nth-child(2), .processes th:nth-child(2) {\n\twidth: 50%;\n}\n.processes td:nth-child(3), .processes th:nth-child(3) {\n\twidth: 20%;\n\ttext-align: right\n}\n.processes td:nth-child(4), .processes th:nth-child(4) {\n\twidth: 20%;\n\ttext-align: right\n}\n\n\n\n", ""]);
+	exports.push([module.id, "body {\n\tbackground-color: #f8f8f8;\n}\n\n.processes thead, .processes tr {\n\twidth: 100%;\n}\n\n.processes td:nth-child(1), .processes th:nth-child(1) {\n\twidth: 8%;\n\ttext-align: right\n}\n.processes td:nth-child(2), .processes th:nth-child(2) {\n\toverflow: hidden;\n\ttext-overflow: ellipsis;\n\twhite-space: nowrap;\n}\n.processes td:nth-child(3), .processes th:nth-child(3) {\n\twidth: 8%;\n\ttext-align: right\n}\n.processes td:nth-child(4), .processes th:nth-child(4) {\n\twidth: 10%;\n\ttext-align: right\n}\n\n\n", ""]);
 
 	// exports
 
