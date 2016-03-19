@@ -12,6 +12,7 @@ extern crate mount;
 #[macro_use]
 extern crate mime;
 extern crate time;
+extern crate toml;
 
 use iron::prelude::*;
 use iron::response::{ResponseBody, WriteBody};
@@ -28,7 +29,8 @@ use libc::{c_char,c_int,size_t};
 use std::iter::repeat;
 use std::time::Duration;
 use std::cmp;
-use std::io::{Error,ErrorKind,Result};
+use std::io::{Read, Error,ErrorKind,Result};
+use std::fs::File;
 use serde_json::value::to_value;
 
 pub mod sensors;
@@ -148,8 +150,20 @@ impl WriteBody for MetricsEventStream {
 unsafe impl Send for MetricsEventStream {}
 
 fn main() {
+    let mut port = 3000;
+    let config_file = File::open("topd.toml");
+    if config_file.is_ok() {
+        let mut config_content = String::new();
+    	config_file.unwrap().read_to_string(&mut config_content).unwrap();
+
+    	let config = toml::Parser::new(&config_content).parse().unwrap();
+        if let Some(value) = config.get("port") {
+            port = value.as_integer().unwrap() as u16;
+        }
+    }
+
     println!("topd v{}", VERSION.unwrap_or("?"));
-    println!("Listening on http://localhost:3000/");
+    println!("Listening on http://localhost:{}/", port);
 
     let mut mount = Mount::new();
     mount.mount("/bundle.js", |_: &mut Request| {
@@ -174,6 +188,6 @@ fn main() {
     mount.mount("/", |_: &mut Request| {
         Ok(Response::with((status::Ok, mime!(Text/Html), INDEX_HTML)))
     });
-    Iron::new(mount).http("0.0.0.0:3000").unwrap();
+    Iron::new(mount).http(("::", port)).unwrap();
 
 }
