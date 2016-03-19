@@ -131,6 +131,9 @@ impl WriteBody for MetricsEventStream {
                     map.insert("cpu", to_value(&process.cpu));
                     map.insert("rss", to_value(&process.rss));
                     map.insert("cmd", to_value(&process.cmd));
+                    if let Some(cmdline) = process.cmdline {
+                        map.insert("cmdline", to_value(&cmdline));                        
+                    }
                     process_list.push(map);
                 }
                 result.insert("processes", to_value(&process_list));

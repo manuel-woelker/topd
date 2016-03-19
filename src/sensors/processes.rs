@@ -26,6 +26,7 @@ pub struct ProcessInfo {
 	pub cpu: f64,
 	pub rss: u64,
 	pub cmd: String,
+	pub cmdline: Option<String>
 }
 
 impl ProcessesSensor {
@@ -64,6 +65,15 @@ impl ProcessesSensor {
 						if let Some(ref last_measurement) = self.last_measurement.get(&pid) {
 								let usage = (ttime - last_measurement.ttime)/elapsed_time_in_s;
 								process_info.cpu = usage;
+						} else {
+							// Looks like a new process
+							if let Ok(file) = File::open(format!("/proc/{}/cmdline", pid)) {
+								let mut reader = io::BufReader::new(file);
+								let mut cmdline = String::new();
+								if reader.read_to_string(&mut cmdline).is_ok() {
+									process_info.cmdline = Some(cmdline.replace("\0", " "));
+								}
+							}
 						}
 						self.last_measurement.insert(pid, ProcessValue {ttime: ttime});
 						process_info.cmd = cmd.to_string();

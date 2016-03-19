@@ -26,7 +26,8 @@ let initialState = {
 		_max: 10,
 		disks: {}
 	},
-	systemInfo: {}
+	systemInfo: {},
+	cmdlines: {}
 };
 
 initialState.loadHistory.fill(0);
@@ -90,8 +91,19 @@ function receiveSystemMetrics(state, action) {
 	if(!action.systemMetrics.processes) {
 		action.systemMetrics.processes = state.systemMetrics.processes;
 	}
+	let processes = action.systemMetrics.processes;
+	let cmdlines = state.cmdlines;
+	for(var i in processes) {
+		let process = processes[i];
+		if(process.cmdline) {
+			cmdlines[process.pid] = process.cmdline;
+		} else {
+			process.cmdline = cmdlines[process.pid] || "?";
+		}
+	}
 	return Object.assign({}, state, {
 		systemMetrics: action.systemMetrics,
+		cmdlines,
 		cpuHistory: cpuHistory,
 		loadHistory,
 		memoryHistory,
