@@ -1,6 +1,6 @@
 [package]
 name = "topd"
-version = "1.0.1-pre"
+version = "1.0.1"
 authors = ["Manuel Woelker <github@manuel.woelker.org>"]
 description = "A remote top daemon"
 license = "MIT/Apache-2.0"
