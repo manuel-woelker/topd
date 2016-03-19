@@ -1,11 +1,12 @@
 import {Table, Button} from "react-bootstrap";
 
 function toFixed(input) {
-	if (!input || !input.toFixed) {
+	if (input !== 0 && (!input || !input.toFixed)) {
 		return input;
 	}
 	return input.toFixed(2);
 }
+
 
 export default React.createClass({
 	render() {

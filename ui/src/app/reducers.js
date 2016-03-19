@@ -45,7 +45,7 @@ initialState.netHistory.recv.fill(0);
 function receiveSystemMetrics(state, action) {
 	var cpuUsage = action.systemMetrics.cpu_usage;
 	var memoryUsage = action.systemMetrics.memory_usage;
-	cpuUsage.other = 1 - cpuUsage.system - cpuUsage.user - cpuUsage.idle;
+	cpuUsage.other = Math.max(0, 1 - cpuUsage.system - cpuUsage.user - cpuUsage.idle);
 	let cpuHistory = {
 		user: state.cpuHistory.user.concat([cpuUsage.user]).slice(-HISTORY_SIZE),
 		system: state.cpuHistory.system.concat([cpuUsage.system]).slice(-HISTORY_SIZE),
