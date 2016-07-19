@@ -14,8 +14,9 @@ extern crate mime;
 extern crate time;
 extern crate toml;
 
-use iron::prelude::*;
-use iron::response::{ResponseBody, WriteBody};
+use iron::Iron;
+use iron::request::{Request};
+use iron::response::{Response, ResponseBody, WriteBody};
 use iron::status;
 use mount::Mount;
 
@@ -174,8 +175,8 @@ fn main() {
     });
     mount.mount("/api/system-metrics-events", |_: &mut Request| {
         let stream = MetricsEventStream;
-        let boxed_stream: Box<WriteBody + Send> = Box::new(stream);
-        let response = Response::with((status::Ok, mime!(Text/EventStream), boxed_stream));
+        let boxed_stream: Box<WriteBody + 'static> = Box::new(stream);
+		let response = Response::with((status::Ok, mime!(Text/EventStream), boxed_stream));
         Ok(response)
     });
 
