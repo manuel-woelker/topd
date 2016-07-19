@@ -57,7 +57,7 @@ gulp.task('dev', function () {
 		}
 	});
 	server.listen(8081, "0.0.0.0", function () {
-		console.log("listening");
+		console.log("listening on 8081");
 	});
 });
 

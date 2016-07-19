@@ -87,7 +87,8 @@ function receiveSystemMetrics(state, action) {
 		}
 		diskHistory.disks[disk] = history.concat([value]).slice(-HISTORY_SIZE);
 	}
-	let loadHistory = state.loadHistory.concat([action.systemMetrics.loadavg.load_avg_1_min / 10]).slice(-HISTORY_SIZE);
+	let loadHistory = state.loadHistory.concat([Math.min(1, action.systemMetrics.loadavg.load_avg_1_min / 10)]).slice(-HISTORY_SIZE);
+	action.systemMetrics.loadavg.color = action.systemMetrics.loadavg.load_avg_1_min < 10 ? "#0d551c" : "#a00000";
 	if(!action.systemMetrics.processes) {
 		action.systemMetrics.processes = state.systemMetrics.processes;
 	}

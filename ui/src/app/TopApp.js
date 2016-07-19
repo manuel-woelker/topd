@@ -67,7 +67,7 @@ export default connect(state => state)(React.createClass({
 
 		var loadMetrics = [
 			{
-				strokeStyle: "#0d551c",
+				strokeStyle: this.props.systemMetrics.loadavg.color,
 				values: this.props.loadHistory
 			}
 		];
