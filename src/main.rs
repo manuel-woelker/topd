@@ -1,14 +1,18 @@
 #![allow(dead_code)]
-#[macro_use]
 extern crate procinfo;
 
+#[macro_use]
+extern crate serde_derive;
 extern crate serde;
-extern crate num_cpus;
+#[macro_use]
 extern crate serde_json;
+
+extern crate num_cpus;
 
 extern crate libc;
 extern crate iron;
 extern crate mount;
+
 #[macro_use]
 extern crate mime;
 extern crate time;
@@ -16,7 +20,7 @@ extern crate toml;
 
 use iron::Iron;
 use iron::request::{Request};
-use iron::response::{Response, ResponseBody, WriteBody};
+use iron::response::{Response, WriteBody};
 use iron::status;
 use mount::Mount;
 
@@ -32,7 +36,6 @@ use std::time::Duration;
 use std::cmp;
 use std::io::{Read, Error,ErrorKind,Result};
 use std::fs::File;
-use serde_json::value::to_value;
 
 pub mod sensors;
 
@@ -74,7 +77,7 @@ pub fn hostname() -> Result<String> {
 struct MetricsEventStream;
 
 impl WriteBody for MetricsEventStream {
-    fn write_body(&mut self, res: &mut ResponseBody) -> Result<()> {
+    fn write_body(&mut self, mut res: &mut Write) -> Result<()> {
         let mut cpu_sensor = CpuSensor::new();
         let memory_sensor = MemorySensor::new();
         let mut net_sensor = NetSensor::new();
@@ -90,8 +93,8 @@ impl WriteBody for MetricsEventStream {
             loadavg_map.insert("load_avg_1_min", loadavg.load_avg_1_min);
             loadavg_map.insert("load_avg_5_min", loadavg.load_avg_5_min);
             loadavg_map.insert("load_avg_10_min", loadavg.load_avg_10_min);
-            result.insert("loadavg", to_value(&loadavg_map));
-            result.insert("timestamp", to_value(&time::get_time().sec));
+            result.insert("loadavg", json!(&loadavg_map));
+            result.insert("timestamp", json!(&time::get_time().sec));
             if let Some(cpu_usage) = cpu_sensor.measure() {
                 let mut usage_map = HashMap::new();
                 usage_map.insert("user", cpu_usage[0]);
@@ -104,7 +107,7 @@ impl WriteBody for MetricsEventStream {
                 usage_map.insert("steal", cpu_usage[7]);
                 usage_map.insert("guest", cpu_usage[8]);
                 usage_map.insert("guest_nice", cpu_usage[9]);
-                result.insert("cpu_usage", to_value(&usage_map));
+                result.insert("cpu_usage", json!(&usage_map));
             }
 
             if let Some(memory_usage) = memory_sensor.measure() {
@@ -113,34 +116,34 @@ impl WriteBody for MetricsEventStream {
                 usage_map.insert("buffers", memory_usage.buffers);
                 usage_map.insert("cache", memory_usage.cache);
                 usage_map.insert("swap", memory_usage.swap);
-                result.insert("memory_usage", to_value(&usage_map));
+                result.insert("memory_usage", json!(&usage_map));
             }
             if let Some(net_usage) = net_sensor.measure() {
                 let mut usage_map = HashMap::new();
                 usage_map.insert("recv", net_usage.recv);
                 usage_map.insert("send", net_usage.send);
-                result.insert("net_usage", to_value(&usage_map));
+                result.insert("net_usage", json!(&usage_map));
             }
             let disk_usage = disk_sensor.measure();
-            result.insert("disk_usage", to_value(&disk_usage));
+            result.insert("disk_usage", json!(&disk_usage));
             if iteration_counter % 10 == 0 {
                 let processes = processes_sensor.measure();
                 let mut process_list = Vec::new();
                 for process in processes {
                     let mut map = HashMap::new();
-                    map.insert("pid", to_value(&process.pid));
-                    map.insert("cpu", to_value(&process.cpu));
-                    map.insert("rss", to_value(&process.rss));
-                    map.insert("cmd", to_value(&process.cmd));
+                    map.insert("pid", json!(process.pid));
+                    map.insert("cpu", json!(&process.cpu));
+                    map.insert("rss", json!(&process.rss));
+                    map.insert("cmd", json!(&process.cmd));
                     if let Some(cmdline) = process.cmdline {
-                        map.insert("cmdline", to_value(&cmdline));                        
+                        map.insert("cmdline", json!(&cmdline));                        
                     }
                     process_list.push(map);
                 }
-                result.insert("processes", to_value(&process_list));
+                result.insert("processes", json!(&process_list));
             }
 
-            serde_json::to_writer(res, &result).unwrap();
+            serde_json::to_writer(&mut res, &result).unwrap();
             try!(write!(res, "\n\n"));
             try!(res.flush());
             let end_time = PreciseTime::now();
@@ -153,17 +156,25 @@ impl WriteBody for MetricsEventStream {
 
 unsafe impl Send for MetricsEventStream {}
 
+
+fn default_port() -> u16 {
+	3000
+}
+#[derive(Deserialize)]
+struct Config {
+	#[serde(default = "default_port")]
+	port: u16,
+}
+
+
 fn main() {
     let mut port = 3000;
     let config_file = File::open("topd.toml");
     if config_file.is_ok() {
         let mut config_content = String::new();
     	config_file.unwrap().read_to_string(&mut config_content).unwrap();
-
-    	let config = toml::Parser::new(&config_content).parse().unwrap();
-        if let Some(value) = config.get("port") {
-            port = value.as_integer().unwrap() as u16;
-        }
+    	let config: Config = toml::from_str(&config_content).unwrap();
+		port = config.port;
     }
 
     println!("topd v{}", VERSION.unwrap_or("?"));
@@ -182,9 +193,9 @@ fn main() {
 
     mount.mount("/api/system-info", |_: &mut Request| {
         let mut result = HashMap::new();
-        result.insert("numberOfCpus", to_value(&num_cpus::get()));
-        let _ = hostname().map(|hostname| result.insert("hostname", to_value(&hostname)));
-        result.insert("version", to_value(&VERSION.unwrap_or("unknown")));
+        result.insert("numberOfCpus", json!(&num_cpus::get()));
+        let _ = hostname().map(|hostname| result.insert("hostname", json!(&hostname)));
+        result.insert("version", json!(&VERSION.unwrap_or("unknown")));
         let result = serde_json::to_string(&result).unwrap();
 
         Ok(Response::with((status::Ok, mime!(Application/Json), result)))
