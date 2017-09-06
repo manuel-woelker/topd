@@ -1,13 +1,15 @@
 import {Table, Button} from "react-bootstrap";
+import * as React from "react";
+import {Process} from "../app/reducers";
 
-function toFixed(input) {
+function toFixed(input?: number) {
 	if (input !== 0 && (!input || !input.toFixed)) {
 		return input;
 	}
 	return input.toFixed(1);
 }
 
-export default React.createClass({
+export class ProcessesComponent extends React.Component<{processes: Process[]}>{
 	render() {
 		let processes = this.props.processes || [];
 		processes = processes.slice();
@@ -42,7 +44,7 @@ export default React.createClass({
 			</div>
 		</div>;
 	}
-});
+}
 
 
 

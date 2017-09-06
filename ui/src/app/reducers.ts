@@ -36,13 +36,21 @@ export interface NetUsage {
 	recv: number;
 }
 
+export interface Process {
+	cpu: number;
+	pid: number;
+	cmd: string;
+	cmdline: string;
+	rss: number;
+}
+
 export interface State {
 	systemMetrics: {
 		loadavg?: LoadAvg;
-		processes?: any[];
 		cpu_usage?: CpuUsage;
 		disk_usage?: DiskUsage;
 		memory_usage?: MemoryUsage;
+		processes?: Process[];
 	},
 	loadHistory: DataSeries;
 	cpuHistory: {

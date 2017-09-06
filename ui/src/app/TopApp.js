@@ -8,9 +8,9 @@ import {MemoryUsageComponent} from "../memory/MemoryUsageComponent";
 import {NetUsageComponent} from "../net/NetUsageComponent";
 import {DiskUsageComponent} from "../disk/DiskUsageComponent";
 
-import HistoryComponent from "../history/HistoryComponent.js";
+import {HistoryComponent} from "../history/HistoryComponent";
 
-import ProcessesComponent from "../processes/ProcessesComponent.js";
+import {ProcessesComponent} from "../processes/ProcessesComponent";
 
 export default connect(state => state)(React.createClass({
 	render() {
