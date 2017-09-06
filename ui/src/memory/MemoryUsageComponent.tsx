@@ -1,13 +1,14 @@
-import {Table, Button} from "react-bootstrap";
+import * as React from "react";
+import {MemoryUsage} from "../app/reducers";
 
-function toFixed(input) {
+function toFixed(input?: number) {
 	if (input !== 0 && (!input || !input.toFixed)) {
 		return input;
 	}
 	return input.toFixed(1);
 }
 
-export default React.createClass({
+export class MemoryUsageComponent extends React.Component<{memoryUsage: MemoryUsage}> {
 	render() {
 		let memoryUsage = this.props.memoryUsage || {};
 		return <div>
@@ -34,4 +35,4 @@ export default React.createClass({
 			<div style={{display: "inline-block", width: 75}}>&nbsp;Swap</div>
 		</div>;
 	}
-});
+}

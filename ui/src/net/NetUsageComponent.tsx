@@ -1,13 +1,14 @@
-import {Table, Button} from "react-bootstrap";
+import * as React from "react";
+import {NetUsage} from "../app/reducers";
 
-function toFixed(input) {
+function toFixed(input?: number) {
 	if (!input || !input.toFixed) {
 		return input;
 	}
 	return input.toFixed(3);
 }
 
-export default React.createClass({
+export class NetUsageComponent extends React.Component<{netUsage: NetUsage}> {
 	render() {
 		let netUsage = this.props.netUsage || {};
 		return <div>
@@ -18,7 +19,7 @@ export default React.createClass({
 					<div style={{display: "inline-block", width: 150}}>&nbsp;Send</div>
 		</div>;
 	}
-});
+}
 
 
 

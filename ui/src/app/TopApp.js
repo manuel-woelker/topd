@@ -2,11 +2,11 @@ import { connect } from 'react-redux';
 
 import {Navbar, Nav, NavbarBrand, NavItem, Grid, Row, Col} from "react-bootstrap";
 
-import LoadAvgComponent from "../load/LoadAvgComponent.js";
-import CpuUsageComponent from "../cpu/CpuUsageComponent.js";
-import MemoryUsageComponent from "../memory/MemoryUsageComponent.js";
-import NetUsageComponent from "../net/NetUsageComponent.js";
-import DiskUsageComponent from "../disk/DiskUsageComponent.js";
+import {LoadAvgComponent} from "../load/LoadAvgComponent";
+import {CpuUsageComponent} from "../cpu/CpuUsageComponent";
+import {MemoryUsageComponent} from "../memory/MemoryUsageComponent";
+import {NetUsageComponent} from "../net/NetUsageComponent";
+import {DiskUsageComponent} from "../disk/DiskUsageComponent";
 
 import HistoryComponent from "../history/HistoryComponent.js";
 

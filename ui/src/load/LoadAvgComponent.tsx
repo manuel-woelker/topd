@@ -1,14 +1,14 @@
-import {Table, Button} from "react-bootstrap";
+import * as React from "react";
+import {LoadAvg} from "../app/reducers";
 
-function toFixed(input) {
+function toFixed(input?: number) {
 	if (input !== 0 && (!input || !input.toFixed)) {
 		return input;
 	}
 	return input.toFixed(2);
 }
 
-
-export default React.createClass({
+export class LoadAvgComponent extends React.Component<{loadavg: LoadAvg}>{
 	render() {
 		let loadavg = this.props.loadavg || {};
 		return <div>
@@ -21,4 +21,4 @@ export default React.createClass({
 			<div style={{display: "inline-block", width: 100}}>&nbsp;(10 min)</div>
 		</div>;
 	}
-});
+}

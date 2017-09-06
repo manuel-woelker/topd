@@ -1,16 +1,17 @@
-import {Table, Button} from "react-bootstrap";
+import * as React from "react";
+import {DiskUsage} from "../app/reducers";
 
-function toFixed(input) {
+function toFixed(input: number) {
 	if (!input || !input.toFixed) {
 		return input;
 	}
 	return input.toFixed(0);
 }
 
-export default React.createClass({
+export class DiskUsageComponent extends React.Component<{diskUsage: DiskUsage}> {
 	render() {
 		let diskUsage = this.props.diskUsage || {};
-		let disks = [];
+		let disks: {disk: string, value: number}[] = [];
 		for(var disk in diskUsage) {
 			disks.push({disk: disk, value: diskUsage[disk]});
 		}
@@ -18,7 +19,7 @@ export default React.createClass({
 			<div style={{width: 200, fontSize: "32px", display: "inline-block"}}>Disk Usage</div>
 			{
 				disks.map((disk) => {
-					return <div key={disk} style={{display: "inline-block"}}>
+					return <div key={disk.disk} style={{display: "inline-block"}}>
 					<div style={{display: "inline-block", width: 100, color: "#0d3c55", fontWeight: "bold", textAlign: "right"}}>{toFixed(disk.value)}</div>
 					<div style={{display: "inline-block", width: 100}}>&nbsp;{disk.disk}</div>
 						</div>;
@@ -27,5 +28,5 @@ export default React.createClass({
 
 		</div>;
 	}
-});
+}
 

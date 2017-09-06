@@ -1,9 +1,70 @@
 const HISTORY_SIZE = 30;
 
+export type DataSeries = number[];
+
+export interface DiskHistory {
+	_max: number,
+	disks: { [key: string]: any },
+}
+
+export interface CpuUsage {
+	system: number,
+	user: number,
+	other: number,
+}
+
+export interface DiskUsage {
+	[key: string]: number;
+}
+
+export interface LoadAvg {
+	load_avg_1_min?: number;
+	load_avg_5_min?: number;
+	load_avg_10_min?: number;
+	color?: string;
+}
+
+export interface MemoryUsage {
+	used: number;
+	buffers: number;
+	cache: number;
+	swap: number;
+}
+
+export interface NetUsage {
+	send: number;
+	recv: number;
+}
+
+export interface State {
+	systemMetrics: {
+		loadavg?: LoadAvg;
+		processes?: any[];
+		cpu_usage?: CpuUsage;
+		disk_usage?: DiskUsage;
+		memory_usage?: MemoryUsage;
+	},
+	loadHistory: DataSeries;
+	cpuHistory: {
+		[P in keyof CpuUsage]: DataSeries;
+	};
+	memoryHistory: {
+		[P in keyof MemoryUsage]: DataSeries;
+	};
+	netHistory: {
+		send: DataSeries;
+		recv: DataSeries;
+		max: number;
+	};
+	diskHistory: DiskHistory;
+	systemInfo: any;
+	cmdlines: any;
+
+}
 
 let initialState = {
 	systemMetrics: {
-		loadavg: {}
+		loadavg: {},
 	},
 	loadHistory: new Array(30),
 	cpuHistory: {
@@ -43,7 +104,7 @@ initialState.netHistory.send.fill(0);
 initialState.netHistory.recv.fill(0);
 
 
-function receiveSystemMetrics(state, action) {
+function receiveSystemMetrics(state: State, action: any) {
 	var cpuUsage = action.systemMetrics.cpu_usage;
 	var memoryUsage = action.systemMetrics.memory_usage;
 	cpuUsage.other = Math.max(0, 1 - cpuUsage.system - cpuUsage.user - cpuUsage.idle);
@@ -71,15 +132,15 @@ function receiveSystemMetrics(state, action) {
 	var diskUsage = action.systemMetrics.disk_usage || {};
 	var oldDiskHistory = state.diskHistory;
 	let netMaxValue = oldDiskHistory._max;
-	for(var disk in diskUsage) {
+	for (var disk in diskUsage) {
 		let value = diskUsage[disk];
 		netMaxValue = Math.max(netMaxValue, value);
 	}
-	let diskHistory = {
+	let diskHistory: DiskHistory = {
 		_max: netMaxValue,
 		disks: {}
 	};
-	for(var disk in diskUsage) {
+	for (var disk in diskUsage) {
 		let value = diskUsage[disk];
 		var history = oldDiskHistory.disks[disk];
 		if (!history) {
@@ -89,14 +150,14 @@ function receiveSystemMetrics(state, action) {
 	}
 	let loadHistory = state.loadHistory.concat([Math.min(1, action.systemMetrics.loadavg.load_avg_1_min / 10)]).slice(-HISTORY_SIZE);
 	action.systemMetrics.loadavg.color = action.systemMetrics.loadavg.load_avg_1_min < 10 ? "#0d551c" : "#a00000";
-	if(!action.systemMetrics.processes) {
+	if (!action.systemMetrics.processes) {
 		action.systemMetrics.processes = state.systemMetrics.processes;
 	}
 	let processes = action.systemMetrics.processes;
 	let cmdlines = state.cmdlines;
-	for(var i in processes) {
+	for (var i in processes) {
 		let process = processes[i];
-		if(process.cmdline) {
+		if (process.cmdline) {
 			cmdlines[process.pid] = process.cmdline;
 		} else {
 			process.cmdline = cmdlines[process.pid] || "?";
@@ -113,12 +174,12 @@ function receiveSystemMetrics(state, action) {
 	});
 }
 
-function receiveSystemInfo(state, action) {
+function receiveSystemInfo(state: State, action: any) {
 	return Object.assign({}, state, {systemInfo: action.systemInfo});
 }
 
 
-function reducer(state = initialState, action = {}) {
+function reducer(state: State = initialState, action: any = {}) {
 	switch (action.type) {
 		case "RECEIVE_SYSTEM_METRICS":
 			return receiveSystemMetrics(state, action);

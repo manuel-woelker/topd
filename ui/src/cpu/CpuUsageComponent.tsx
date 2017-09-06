@@ -1,13 +1,14 @@
-import {Table, Button} from "react-bootstrap";
+import * as React from "react";
+import {CpuUsage} from "../app/reducers";
 
-function toFixed(input) {
+function toFixed(input: number) {
 	if (input !== 0 && (!input || !input.toFixed)) {
 		return input;
 	}
 	return input.toFixed(1);
 }
 
-export default React.createClass({
+export class CpuUsageComponent extends React.Component<{cpu_usage: CpuUsage}> {
 	render() {
 		let cpu_usage = this.props.cpu_usage || {};
 		return <div>
@@ -20,4 +21,4 @@ export default React.createClass({
 					<div style={{display: "inline-block", width: 100}}>&nbsp;Other</div>
 		</div>;
 	}
-});
+}
