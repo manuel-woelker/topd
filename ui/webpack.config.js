@@ -7,9 +7,12 @@ module.exports = {
 		path: path.resolve(__dirname, '../src/assets'),
 		filename: 'bundle.js'
 	},
+	resolve: {
+		extensions: ['.ts', '.tsx', '.js', '.jsx']
+	},
 	module: {
 		rules: [
-			{test: /\.js$/, use: 'babel-loader', exclude: /node_modules/},
+			{test: /\.[jt]sx?$/, use: 'awesome-typescript-loader', exclude: /node_modules/},
 			{test: /\.css$/, loader: "style-loader!css-loader"},
 			{test: /\.woff$/, loader: "url-loader?limit=10000&mimetype=application/font-woff"},
 			{test: /\.woff2$/, loader: "url-loader?limit=10000&mimetype=application/font-woff"},
