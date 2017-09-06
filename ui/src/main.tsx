@@ -1,7 +1,5 @@
 declare const require: any;
 
-require("expose-loader?React!react");
-
 import * as React from "react";
 import * as ReactDOM from 'react-dom';
 
