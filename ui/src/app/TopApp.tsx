@@ -11,8 +11,10 @@ import {DiskUsageComponent} from "../disk/DiskUsageComponent";
 import {HistoryComponent} from "../history/HistoryComponent";
 
 import {ProcessesComponent} from "../processes/ProcessesComponent";
+import {State} from "./reducers";
+import * as React from "react";
 
-export default connect(state => state)(React.createClass({
+class TopAppUnconnected extends React.Component<State> {
 	render() {
 		var cpuMetrics = [
 			{
@@ -58,16 +60,16 @@ export default connect(state => state)(React.createClass({
 		for (var disk in diskHistory.disks) {
 			let values = diskHistory.disks[disk];
 			diskMetrics.push({
-				disk: disk,
 				strokeStyle: "#c02e1d",
-				values: values.map((x) => x / diskMaxValue)
+				values: values.map((x: number) => x / diskMaxValue)
 			})
 		}
 
 
+		let loadavg = this.props.systemMetrics.loadavg || {color: "red"};
 		var loadMetrics = [
 			{
-				strokeStyle: this.props.systemMetrics.loadavg.color,
+				strokeStyle: loadavg.color,
 				values: this.props.loadHistory
 			}
 		];
@@ -100,4 +102,7 @@ export default connect(state => state)(React.createClass({
 		</div>;
 
 	}
-}));
+}
+
+
+export const TopApp = connect((state: State) => state)(TopAppUnconnected);

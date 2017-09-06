@@ -1,7 +1,9 @@
-//require("babel/polyfill");
+declare const require: any;
 
 require("expose-loader?React!react");
 
+import * as React from "react";
+import * as ReactDOM from 'react-dom';
 
 // Redux utility functions
 import { compose, createStore, applyMiddleware } from 'redux';
@@ -11,7 +13,7 @@ import { compose, createStore, applyMiddleware } from 'redux';
 //import { DevTools, DebugPanel, LogMonitor } from 'redux-devtools/lib/react';
 
 import { Provider } from 'react-redux';
-import TopApp from './app/TopApp';
+import { TopApp } from './app/TopApp';
 import reducers from './app/reducers';
 
 
@@ -31,6 +33,7 @@ let finalCreateStore = createStore;
 
 let store = finalCreateStore(reducers);
 
+declare const module: any;
 
 if (module.hot) {
 	// Enable Webpack hot module replacement for reducers
@@ -40,12 +43,14 @@ if (module.hot) {
 	});
 }
 
-let debugPanel = null;
+let debugPanel: any = null;
 /*
 let debugPanel = <DebugPanel top right bottom>
 	<DevTools store={store} monitor={LogMonitor}/>
 </DebugPanel>;
 */
+
+declare const EventSource: any;
 
 window.onload = function () {
 	ReactDOM.render(
@@ -74,7 +79,7 @@ window.onload = function () {
 	getSystemInfo();
 
 	var evtSource = new EventSource("/api/system-metrics-events");
-	evtSource.addEventListener("metrics", function(e) {
+	evtSource.addEventListener("metrics", function(e: any) {
 		var metrics = JSON.parse(e.data);
 		store.dispatch({type: "RECEIVE_SYSTEM_METRICS", systemMetrics: metrics});
 	}, false);

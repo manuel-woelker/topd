@@ -47,9 +47,10 @@ export interface Process {
 export interface State {
 	systemMetrics: {
 		loadavg?: LoadAvg;
-		cpu_usage?: CpuUsage;
+		cpu_usage: CpuUsage;
+		net_usage: NetUsage;
 		disk_usage?: DiskUsage;
-		memory_usage?: MemoryUsage;
+		memory_usage: MemoryUsage;
 		processes?: Process[];
 	},
 	loadHistory: DataSeries;
@@ -70,9 +71,25 @@ export interface State {
 
 }
 
-let initialState = {
+let initialState: State = {
 	systemMetrics: {
 		loadavg: {},
+		cpu_usage: {
+			system: NaN,
+			user: NaN,
+			other: NaN,
+		},
+		memory_usage: {
+			buffers: NaN,
+			cache: NaN,
+			swap: NaN,
+			used: NaN,
+		},
+		net_usage: {
+			send: NaN,
+			recv: NaN,
+		},
+
 	},
 	loadHistory: new Array(30),
 	cpuHistory: {

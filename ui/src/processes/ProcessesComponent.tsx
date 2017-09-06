@@ -9,7 +9,7 @@ function toFixed(input?: number) {
 	return input.toFixed(1);
 }
 
-export class ProcessesComponent extends React.Component<{processes: Process[]}>{
+export class ProcessesComponent extends React.Component<{processes?: Process[]}>{
 	render() {
 		let processes = this.props.processes || [];
 		processes = processes.slice();

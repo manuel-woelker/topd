@@ -8,7 +8,7 @@ function toFixed(input: number) {
 	return input.toFixed(0);
 }
 
-export class DiskUsageComponent extends React.Component<{diskUsage: DiskUsage}> {
+export class DiskUsageComponent extends React.Component<{diskUsage?: DiskUsage}> {
 	render() {
 		let diskUsage = this.props.diskUsage || {};
 		let disks: {disk: string, value: number}[] = [];

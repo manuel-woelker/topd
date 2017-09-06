@@ -8,7 +8,7 @@ function toFixed(input?: number) {
 	return input.toFixed(2);
 }
 
-export class LoadAvgComponent extends React.Component<{loadavg: LoadAvg}>{
+export class LoadAvgComponent extends React.Component<{loadavg?: LoadAvg}>{
 	render() {
 		let loadavg = this.props.loadavg || {};
 		return <div>

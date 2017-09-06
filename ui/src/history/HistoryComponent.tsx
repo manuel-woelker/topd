@@ -4,10 +4,10 @@ import {DataSeries} from "../app/reducers";
 
 
 export interface Metrics {
-	strokeStyle: string;
+	strokeStyle?: string;
 	values: DataSeries;
 }
-export class HistoryComponent extends React.Component<{metrics: Metrics[]}> {
+export class HistoryComponent extends React.Component<{metrics?: Metrics[]}> {
 	painted: boolean = false;
 	canvas: HTMLCanvasElement;
 	scale: number;
@@ -44,7 +44,7 @@ export class HistoryComponent extends React.Component<{metrics: Metrics[]}> {
 
 		for (var i = 0; i < metrics.length; i++) {
 			var metric = metrics[i];
-			ctx.strokeStyle = metric.strokeStyle;
+			ctx.strokeStyle = metric.strokeStyle || "red";
 			drawLine(metric.values);
 		}
 
