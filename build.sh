@@ -2,6 +2,6 @@
 
 set -e
 
-(cd ui && npm install && gulp build)
+(cd ui && yarn install && yarn run build)
 cargo build --verbose
 cargo test --verbose

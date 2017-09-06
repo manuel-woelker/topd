@@ -11,7 +11,7 @@ export default React.createClass({
 	render() {
 		let cpu_usage = this.props.cpu_usage || {};
 		return <div>
-			<div style={{width: 200, fontSize: "32px", display: "inline-block"}}>CPU Usage</div>
+			<div style={{width: 200, fontSize: "32px", display: "inline-block"}}>CPUx Usage</div>
 					<div style={{display: "inline-block", width: 100, color: "#0d3c55", fontWeight: "bold", textAlign: "right"}}>{toFixed(cpu_usage.user*100)} %</div>
 					<div style={{display: "inline-block", width: 100}}>&nbsp;User</div>
 					<div style={{display: "inline-block", width: 100, color: "#c02e1d", fontWeight: "bold", textAlign: "right"}}>{toFixed(cpu_usage.system*100)} %</div>

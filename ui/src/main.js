@@ -1,14 +1,14 @@
-require("babel/polyfill");
+//require("babel/polyfill");
 
-require("expose?React!react");
+require("expose-loader?React!react");
 
 
 // Redux utility functions
 import { compose, createStore, applyMiddleware } from 'redux';
 // Redux DevTools store enhancers
-import { devTools, persistState } from 'redux-devtools';
+//import { devTools, persistState } from 'redux-devtools';
 // React components for Redux DevTools
-import { DevTools, DebugPanel, LogMonitor } from 'redux-devtools/lib/react';
+//import { DevTools, DebugPanel, LogMonitor } from 'redux-devtools/lib/react';
 
 import { Provider } from 'react-redux';
 import TopApp from './app/TopApp';
