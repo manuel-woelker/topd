@@ -85,8 +85,9 @@ export class HistoryComponent extends React.Component<{metrics?: Metrics[]}> {
 
 
 	render() {
-		return <div style={{border: "2px solid #eee", width: "800px", overflow: "hidden"}}>
+		return <div style={{overflow: "hidden"}}><div style={{float:"right", border: "2px solid #eee", width: "800px", overflow: "hidden"}}>
 			<canvas ref="canvas" height="120" width="950"/>
+		</div>
 		</div>
 	}
 }

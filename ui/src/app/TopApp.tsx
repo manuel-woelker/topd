@@ -1,6 +1,7 @@
-import { connect } from 'react-redux';
+import {connect} from 'react-redux';
 
 import {Navbar, Nav, NavbarBrand, NavItem, Grid, Row, Col} from "react-bootstrap";
+import * as SplitPane from "react-split-pane";
 
 import {LoadAvgComponent} from "../load/LoadAvgComponent";
 import {CpuUsageComponent} from "../cpu/CpuUsageComponent";
@@ -73,31 +74,32 @@ class TopAppUnconnected extends React.Component<State> {
 				values: this.props.loadHistory
 			}
 		];
+
 		return <div>
 			<Navbar fluid>
-				<NavbarBrand><a href="#"><b>{this.props.systemInfo.hostname}</b><span style={{display: "inline-block", width: 40}}/>topd <span className="text-muted">{this.props.systemInfo.version} </span></a></NavbarBrand>
+				<NavbarBrand><a href="#"><b>{this.props.systemInfo.hostname}</b><span
+					style={{display: "inline-block", width: 40}}/>topd <span
+					className="text-muted">{this.props.systemInfo.version} </span></a></NavbarBrand>
 			</Navbar>
 
 			<div style={{padding: "20px", paddingTop: 0}}>
-				<Grid fluid>
-					<Row>
-						<Col lg={6}>
-							<CpuUsageComponent cpu_usage={this.props.systemMetrics.cpu_usage}/>
-							<HistoryComponent metrics={cpuMetrics}/>
-							<LoadAvgComponent loadavg={this.props.systemMetrics.loadavg}/>
-							<HistoryComponent metrics={loadMetrics}/>
-							<MemoryUsageComponent memoryUsage={this.props.systemMetrics.memory_usage}/>
-							<HistoryComponent metrics={memoryMetrics}/>
-							<NetUsageComponent netUsage={this.props.systemMetrics.net_usage}/>
-							<HistoryComponent metrics={netMetrics}/>
-							<DiskUsageComponent diskUsage={this.props.systemMetrics.disk_usage}/>
-							<HistoryComponent metrics={diskMetrics}/>
-						</Col>
-						<Col lg={6} style={{height: "90vh"}}>
-							<ProcessesComponent processes={this.props.systemMetrics.processes}/>
-						</Col>
-					</Row>
-				</Grid>
+				<SplitPane split="vertical" minSize={400} maxSize={800} defaultSize="50%">
+					<div className="pane">
+						<CpuUsageComponent cpu_usage={this.props.systemMetrics.cpu_usage}/>
+						<HistoryComponent metrics={cpuMetrics}/>
+						<LoadAvgComponent loadavg={this.props.systemMetrics.loadavg}/>
+						<HistoryComponent metrics={loadMetrics}/>
+						<MemoryUsageComponent memoryUsage={this.props.systemMetrics.memory_usage}/>
+						<HistoryComponent metrics={memoryMetrics}/>
+						<NetUsageComponent netUsage={this.props.systemMetrics.net_usage}/>
+						<HistoryComponent metrics={netMetrics}/>
+						<DiskUsageComponent diskUsage={this.props.systemMetrics.disk_usage}/>
+						<HistoryComponent metrics={diskMetrics}/>
+					</div>
+					<div className="pane">
+						<ProcessesComponent processes={this.props.systemMetrics.processes}/>
+					</div>
+				</SplitPane>
 			</div>
 		</div>;
 
