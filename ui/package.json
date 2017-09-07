@@ -24,6 +24,7 @@
 		"@types/react-dom": "^15.5.4",
 		"@types/react-redux": "^5.0.7",
 		"@types/react-split-pane": "^0.1.9",
+		"@types/react-virtualized": "^9.7.4",
 		"awesome-typescript-loader": "^3.2.3",
 		"css-loader": "^0.28.7",
 		"file-loader": "^0.11.2",
@@ -41,6 +42,7 @@
 		"react-dom": "^15.6.1",
 		"react-redux": "^5.0.6",
 		"react-split-pane": "^0.1.66",
+		"react-virtualized": "^9.9.0",
 		"redux": "^3.7.2"
 	}
 }

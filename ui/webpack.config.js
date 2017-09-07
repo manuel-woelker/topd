@@ -12,7 +12,7 @@ module.exports = {
 	},
 	module: {
 		rules: [
-			{test: /\.[jt]sx?$/, use: 'awesome-typescript-loader', exclude: /node_modules/},
+			{test: /\.tsx?$/, use: 'awesome-typescript-loader', exclude: /node_modules/},
 			{test: /\.css$/, loader: "style-loader!css-loader"},
 			{test: /\.woff$/, loader: "url-loader?limit=10000&mimetype=application/font-woff"},
 			{test: /\.woff2$/, loader: "url-loader?limit=10000&mimetype=application/font-woff"},
@@ -25,6 +25,7 @@ module.exports = {
 	devServer: {
 		contentBase: "./src/",
 		inline: true,
+		host: '0.0.0.0',
 		proxy: {
 			'/api': {
 				target: 'http://localhost:3000',

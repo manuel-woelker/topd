@@ -16,12 +16,12 @@ export class DiskUsageComponent extends React.Component<{diskUsage?: DiskUsage}>
 			disks.push({disk: disk, value: diskUsage[disk]});
 		}
 		return <div>
-			<div style={{width: 200, fontSize: "32px", display: "inline-block"}}>Disk Usage</div>
+			<div className="diagram-header" style={{width: 200, display: "inline-block"}}>Disk Usage</div>
 			{
 				disks.map((disk) => {
 					return <div key={disk.disk} style={{display: "inline-block"}}>
-					<div style={{display: "inline-block", width: 100, color: "#0d3c55", fontWeight: "bold", textAlign: "right"}}>{toFixed(disk.value)}</div>
-					<div style={{display: "inline-block", width: 100}}>&nbsp;{disk.disk}</div>
+					<div style={{display: "inline-block", width: 60, color: "#0d3c55", fontWeight: "bold", textAlign: "right"}}>{toFixed(disk.value)}</div>
+					<div style={{display: "inline-block", width: 60}}>&nbsp;{disk.disk}</div>
 						</div>;
 				})
 			}

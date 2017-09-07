@@ -76,13 +76,13 @@ class TopAppUnconnected extends React.Component<State> {
 		];
 
 		return <div>
-			<Navbar fluid>
-				<NavbarBrand><a href="#"><b>{this.props.systemInfo.hostname}</b><span
+			<Navbar fluid style={{marginBottom: 0, minHeight: 40, height: 40}}>
+				<NavbarBrand><a  style={{padding: "4px"}} href="#"><b>{this.props.systemInfo.hostname}</b><span
 					style={{display: "inline-block", width: 40}}/>topd <span
 					className="text-muted">{this.props.systemInfo.version} </span></a></NavbarBrand>
 			</Navbar>
 
-			<div style={{padding: "20px", paddingTop: 0}}>
+			<div style={{padding: "20px", paddingTop: 0, position: "relative", height: "calc(100vh - 75px)"}}>
 				<SplitPane split="vertical" minSize={400} maxSize={800} defaultSize="50%">
 					<div className="pane">
 						<CpuUsageComponent cpu_usage={this.props.systemMetrics.cpu_usage}/>
@@ -96,7 +96,7 @@ class TopAppUnconnected extends React.Component<State> {
 						<DiskUsageComponent diskUsage={this.props.systemMetrics.disk_usage}/>
 						<HistoryComponent metrics={diskMetrics}/>
 					</div>
-					<div className="pane">
+					<div className="pane" style={{height: "100%"}}>
 						<ProcessesComponent processes={this.props.systemMetrics.processes}/>
 					</div>
 				</SplitPane>

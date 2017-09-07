@@ -15,6 +15,8 @@ import { TopApp } from './app/TopApp';
 import reducers from './app/reducers';
 
 
+import 'react-virtualized/styles.css';
+
 require("bootstrap/dist/css/bootstrap.css");
 require("./style/style.css");
 

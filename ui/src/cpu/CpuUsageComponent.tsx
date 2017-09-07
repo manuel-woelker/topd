@@ -12,13 +12,13 @@ export class CpuUsageComponent extends React.Component<{cpu_usage: CpuUsage}> {
 	render() {
 		let cpu_usage = this.props.cpu_usage || {};
 		return <div>
-			<div style={{width: 200, fontSize: "32px", display: "inline-block"}}>CPU Usage</div>
-					<div style={{display: "inline-block", width: 100, color: "#0d3c55", fontWeight: "bold", textAlign: "right"}}>{toFixed(cpu_usage.user*100)} %</div>
-					<div style={{display: "inline-block", width: 100}}>&nbsp;User</div>
-					<div style={{display: "inline-block", width: 100, color: "#c02e1d", fontWeight: "bold", textAlign: "right"}}>{toFixed(cpu_usage.system*100)} %</div>
-					<div style={{display: "inline-block", width: 100}}>&nbsp;System</div>
-					<div style={{display: "inline-block", width: 100, color: "#76772a", fontWeight: "bold", textAlign: "right"}}>{toFixed(cpu_usage.other*100)} %</div>
-					<div style={{display: "inline-block", width: 100}}>&nbsp;Other</div>
+			<div className="diagram-header" style={{width: 200, display: "inline-block"}}>CPU Usage</div>
+					<div style={{display: "inline-block", width: 80, color: "#0d3c55", fontWeight: "bold", textAlign: "right"}}>{toFixed(cpu_usage.user*100)} %</div>
+					<div style={{display: "inline-block", width: 80}}>&nbsp;User</div>
+					<div style={{display: "inline-block", width: 80, color: "#c02e1d", fontWeight: "bold", textAlign: "right"}}>{toFixed(cpu_usage.system*100)} %</div>
+					<div style={{display: "inline-block", width: 80}}>&nbsp;System</div>
+					<div style={{display: "inline-block", width: 80, color: "#76772a", fontWeight: "bold", textAlign: "right"}}>{toFixed(cpu_usage.other*100)} %</div>
+					<div style={{display: "inline-block", width: 80}}>&nbsp;Other</div>
 		</div>;
 	}
 }

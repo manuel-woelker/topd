@@ -78,3 +78,20 @@ body {
 .Resizer.disabled:hover {
 	border-color: transparent;
 }
+
+
+.ReactVirtualized__Table__headerRow {
+	text-transform: none;
+}
+.ReactVirtualized__Table__row:hover {
+	background-color: white;
+}
+
+.align-right {
+	text-align: right;
+}
+
+.diagram-header {
+	font-size: 16px;
+	font-weight: bold;
+}
