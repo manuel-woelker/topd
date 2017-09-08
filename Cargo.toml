@@ -6,6 +6,11 @@ name = "topd"
 repository = "https://github.com/manuel-woelker/topd"
 version = "1.1.1-alpha.0"
 
+[profile.release]
+lto = true
+panic = 'abort'
+
+
 [dependencies]
 iron = "0.5.1"
 libc = "0.2.30"
