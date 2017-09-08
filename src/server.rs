@@ -5,6 +5,8 @@ use std::thread::sleep;
 use iron::Iron;
 use iron::request::{Request};
 use iron::response::{Response, WriteBody};
+use iron::headers::{Encoding, ContentEncoding};
+use iron::modifiers::Header;
 use iron::status;
 use mount::Mount;
 
@@ -26,14 +28,14 @@ use sensors::net::NetSensor;
 use sensors::disk::DiskSensor;
 use sensors::processes::ProcessesSensor;
 
-const INDEX_HTML:&'static str = include_str!("../ui/src/index.html");
-const BUNDLE_JS:&'static str = include_str!("assets/bundle.js");
+const INDEX_HTML:&'static [u8] = include_bytes!("../ui/src/index.html");
+const BUNDLE_JS_GZ: &'static [u8] = include_bytes!("assets/bundle.js.gz");
 
 
 pub fn start(config: &Config) {
 	let mut mount = Mount::new();
 	mount.mount("/bundle.js", |_: &mut Request| {
-		Ok(Response::with((status::Ok, mime!(Text/Html), BUNDLE_JS)))
+		Ok(Response::with((status::Ok, mime!(Application/Javascript), Header(ContentEncoding(vec![Encoding::Gzip])), BUNDLE_JS_GZ)))
 	});
 	mount.mount("/api/system-metrics-events", |_: &mut Request| {
 		let stream = MetricsEventStream;
