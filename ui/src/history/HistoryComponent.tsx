@@ -98,7 +98,7 @@ export class HistoryComponent extends React.Component<{ metrics?: Metrics[] }> {
 
 
 	render() {
-		return <div style={{overflow: "hidden", flexGrow: 1, paddingBottom: "10px"}}>
+		return <div style={{overflow: "hidden", flexGrow: 1}}>
 			<AutoSizer>
 				{({height, width}) =>
 					<div>

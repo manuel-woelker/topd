@@ -1,5 +1,6 @@
 import * as React from "react";
 import {CpuUsage} from "../app/reducers";
+import {UsageComponent} from "../app/UsageComponent";
 
 function toFixed(input: number) {
 	if (input !== 0 && (!input || !input.toFixed)) {
@@ -11,14 +12,19 @@ function toFixed(input: number) {
 export class CpuUsageComponent extends React.Component<{cpu_usage: CpuUsage}> {
 	render() {
 		let cpu_usage = this.props.cpu_usage || {};
-		return <div>
-			<div className="diagram-header" style={{width: 200, display: "inline-block"}}>CPU Usage</div>
-					<div style={{display: "inline-block", width: 80, color: "#0d3c55", fontWeight: "bold", textAlign: "right"}}>{toFixed(cpu_usage.user*100)} %</div>
-					<div style={{display: "inline-block", width: 80}}>&nbsp;User</div>
-					<div style={{display: "inline-block", width: 80, color: "#c02e1d", fontWeight: "bold", textAlign: "right"}}>{toFixed(cpu_usage.system*100)} %</div>
-					<div style={{display: "inline-block", width: 80}}>&nbsp;System</div>
-					<div style={{display: "inline-block", width: 80, color: "#76772a", fontWeight: "bold", textAlign: "right"}}>{toFixed(cpu_usage.other*100)} %</div>
-					<div style={{display: "inline-block", width: 80}}>&nbsp;Other</div>
-		</div>;
+		return <UsageComponent title="CPU Usage">
+			<div>
+				<span style={{color: "#0d3c55", fontWeight: "bold"}}>{toFixed(cpu_usage.user*100)} %</span>
+				&nbsp;User
+			</div>
+			<div>
+				<span style={{color: "#c02e1d", fontWeight: "bold"}}>{toFixed(cpu_usage.system*100)} %</span>
+				&nbsp;System
+			</div>
+			<div>
+				<span style={{color: "#76772a", fontWeight: "bold"}}>{toFixed(cpu_usage.other*100)} %</span>
+				&nbsp;Other
+			</div>
+		</UsageComponent>;
 	}
 }

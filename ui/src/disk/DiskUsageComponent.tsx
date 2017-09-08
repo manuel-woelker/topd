@@ -1,5 +1,6 @@
 import * as React from "react";
 import {DiskUsage} from "../app/reducers";
+import {UsageComponent} from "../app/UsageComponent";
 
 function toFixed(input: number) {
 	if (!input || !input.toFixed) {
@@ -8,25 +9,24 @@ function toFixed(input: number) {
 	return input.toFixed(0);
 }
 
-export class DiskUsageComponent extends React.Component<{diskUsage?: DiskUsage}> {
+export class DiskUsageComponent extends React.Component<{ diskUsage?: DiskUsage }> {
 	render() {
 		let diskUsage = this.props.diskUsage || {};
-		let disks: {disk: string, value: number}[] = [];
-		for(var disk in diskUsage) {
+		let disks: { disk: string, value: number }[] = [];
+		for (var disk in diskUsage) {
 			disks.push({disk: disk, value: diskUsage[disk]});
 		}
-		return <div>
-			<div className="diagram-header" style={{width: 200, display: "inline-block"}}>Disk Usage</div>
+		return <UsageComponent title="Disk Usage">
 			{
 				disks.map((disk) => {
-					return <div key={disk.disk} style={{display: "inline-block"}}>
-					<div style={{display: "inline-block", width: 60, color: "#0d3c55", fontWeight: "bold", textAlign: "right"}}>{toFixed(disk.value)}</div>
-					<div style={{display: "inline-block", width: 60}}>&nbsp;{disk.disk}</div>
-						</div>;
+					return <div key={disk.disk}>
+						<span style={{color: "#0d3c55", fontWeight: "bold"}}>{toFixed(disk.value)}</span>
+						&nbsp;{disk.disk}
+					</div>;
 				})
 			}
 
-		</div>;
+		</UsageComponent>;
 	}
 }
 
