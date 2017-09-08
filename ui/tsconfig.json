@@ -1,6 +1,6 @@
 {
 	"compilerOptions": {
-		"target": "es2016",
+		"target": "es5",
 		"module": "commonjs",
 		"noImplicitAny": true,
 		"strictNullChecks": true,
@@ -8,6 +8,7 @@
 		"preserveConstEnums": true,
 		"sourceMap": true,
 		"jsx": "react",
+		"lib": ["dom", "es2016"],
 		"allowJs": true
 	},
 	"exclude": [

@@ -21,15 +21,5 @@ module.exports = {
 			{test: /\.svg$/, loader: "file-loader"}
 
 		]
-	},
-	devServer: {
-		contentBase: "./src/",
-		inline: true,
-		host: '0.0.0.0',
-		proxy: {
-			'/api': {
-				target: 'http://localhost:3000',
-				secure: false
-			}
-		}}
+	}
 };
