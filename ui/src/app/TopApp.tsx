@@ -83,8 +83,8 @@ class TopAppUnconnected extends React.Component<State> {
 			</Navbar>
 
 			<div style={{padding: "20px", paddingTop: 0, position: "relative", height: "calc(100vh - 75px)"}}>
-				<SplitPane split="vertical" minSize={400} maxSize={800} defaultSize="50%">
-					<div className="pane">
+				<SplitPane split="vertical" defaultSize="50%">
+					<div className="pane" style={{height: "100%", display: "flex", flexDirection: "column"}}>
 						<CpuUsageComponent cpu_usage={this.props.systemMetrics.cpu_usage}/>
 						<HistoryComponent metrics={cpuMetrics}/>
 						<LoadAvgComponent loadavg={this.props.systemMetrics.loadavg}/>
