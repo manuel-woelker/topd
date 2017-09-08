@@ -75,7 +75,7 @@ impl WriteBody for MetricsEventStream {
 			try!(write!(res, "event: metrics\ndata: "));
 			let mut result = HashMap::new();
 			let mut loadavg_map = HashMap::new();
-			let loadavg = procinfo::loadavg().unwrap();
+			let loadavg = procinfo::loadavg()?;
 			loadavg_map.insert("load_avg_1_min", loadavg.load_avg_1_min);
 			loadavg_map.insert("load_avg_5_min", loadavg.load_avg_5_min);
 			loadavg_map.insert("load_avg_10_min", loadavg.load_avg_10_min);
@@ -129,9 +129,9 @@ impl WriteBody for MetricsEventStream {
 				result.insert("processes", json!(&process_list));
 			}
 
-			serde_json::to_writer(&mut res, &result).unwrap();
-			try!(write!(res, "\n\n"));
-			try!(res.flush());
+			serde_json::to_writer(&mut res, &result)?;
+			write!(res, "\n\n")?;
+			res.flush()?;
 			let end_time = PreciseTime::now();
 			let time_to_sleep = cmp::max(100, 500-start_time.to(end_time).num_milliseconds());
 			sleep(Duration::from_millis(time_to_sleep as u64));
