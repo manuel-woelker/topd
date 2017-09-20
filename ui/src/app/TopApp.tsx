@@ -107,7 +107,7 @@ class TopAppUnconnected extends React.Component<State> {
 				<span><a style={{color: "#888"}} href="https://github.com/manuel-woelker/topd">topd {systemInfo.version}</a></span>
 			</div>
 
-			<div style={{padding: "20px", paddingTop: 0, position: "relative", height: "calc(100vh - 75px)"}}>
+			<div style={{padding: "0px 20px", paddingTop: 0, position: "relative", height: "calc(100vh - 75px)"}}>
 				<SplitPane split="vertical" defaultSize="50%">
 					<div className="pane" style={{height: "100%", display: "flex", flexDirection: "column"}}>
 						<CpuUsageComponent cpu_usage={this.props.systemMetrics.cpu_usage}/>
