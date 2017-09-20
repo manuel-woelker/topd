@@ -1,6 +1,5 @@
 import {connect} from 'react-redux';
 
-import {Navbar, Nav, NavbarBrand, NavItem, Grid, Row, Col} from "react-bootstrap";
 import * as SplitPane from "react-split-pane";
 
 import {LoadAvgComponent} from "../load/LoadAvgComponent";
@@ -95,14 +94,6 @@ class TopAppUnconnected extends React.Component<State> {
 				values: this.props.loadHistory
 			}
 		];
-		/*
-		<Navbar fluid style={{marginBottom: 0, minHeight: 40, height: 40}}>
-				<NavbarBrand><a  style={{padding: "4px"}} href="#"><b>{this.props.systemInfo.hostname}</b><span
-					style={{display: "inline-block", width: 40}}/>topd <span className="pull-right"
-					className="pull-right text-muted">{this.props.systemInfo.version} </span></a></NavbarBrand>
-			</Navbar>
-
-		 */
 
 		let systemInfo = this.props.systemInfo;
 		return <div>

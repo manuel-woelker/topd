@@ -41,7 +41,6 @@
 		"bootstrap": "^3.3.7",
 		"humanize-duration": "^3.10.1",
 		"react": "^15.6.1",
-		"react-bootstrap": "^0.31.2",
 		"react-dom": "^15.6.1",
 		"react-redux": "^5.0.6",
 		"react-split-pane": "^0.1.66",
