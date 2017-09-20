@@ -10,6 +10,7 @@ extern crate serde_json;
 extern crate num_cpus;
 
 extern crate libc;
+extern crate ifaces;
 extern crate iron;
 extern crate mount;
 
@@ -45,6 +46,7 @@ pub struct Config {
 
 fn main() {
 	println!("topd v{}", VERSION.unwrap_or("?"));
+
     let config_file = File::open("topd.toml");
 	let mut config = Config {
 		port: default_port(),

@@ -112,6 +112,7 @@ class TopAppUnconnected extends React.Component<State> {
 				<UptimeComponent bootDate={systemInfo.bootDate} />
 				<span>{renderMem(systemInfo.memory)} Mem | {renderMem(systemInfo.swap)} Swap</span>
 				<span>{systemInfo.numberOfCpus} CPUs@{systemInfo.cpuSpeedInMhz} Mhz</span>
+				{(systemInfo.ips && systemInfo.ips.length > 0)? <span title={systemInfo.ips.join(" ")}>IP: {systemInfo.ips[0]}</span>:null}
 				<span><a style={{color: "#888"}} href="https://github.com/manuel-woelker/topd">topd {systemInfo.version}</a></span>
 			</div>
 

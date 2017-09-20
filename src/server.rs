@@ -2,6 +2,7 @@ use std::collections::HashMap;
 use std::io::{Write, Result};
 use std::thread::sleep;
 
+use ifaces;
 use iron::Iron;
 use iron::request::{Request};
 use iron::response::{Response, WriteBody};
@@ -61,6 +62,22 @@ pub fn start(config: &Config) {
 		if let Ok(cpuspeed) = sys_info::cpu_speed() {
 			result.insert("cpuSpeedInMhz", json!(cpuspeed));
 		}
+		if let Ok(interfaces) = ifaces::Interface::get_all() {
+			let mut ips = vec![];
+			for interface in interfaces.into_iter() {
+				if interface.kind != ifaces::Kind::Ipv4 {
+					continue;
+				}
+				if interface.name.starts_with("lo") || interface.name.starts_with("docker") {
+					continue
+				}
+				if let Some(::std::net::SocketAddr::V4(addr)) = interface.addr {
+					ips.push(format!("{}", addr.ip()));
+				}
+			}
+			result.insert("ips", json!(ips));
+		}
+
 		let result = serde_json::to_string(&result).unwrap();
 
 		Ok(Response::with((status::Ok, mime!(Application/Json), result)))

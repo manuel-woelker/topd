@@ -12,6 +12,7 @@ panic = 'abort'
 
 
 [dependencies]
+ifaces = "0.1.0"
 iron = "0.5.1"
 libc = "0.2.30"
 mime = "0.2"
