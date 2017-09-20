@@ -16,6 +16,7 @@ extern crate mount;
 #[macro_use]
 extern crate mime;
 extern crate time;
+extern crate sys_info;
 extern crate toml;
 
 

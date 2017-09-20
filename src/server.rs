@@ -12,6 +12,7 @@ use mount::Mount;
 
 use serde_json;
 use procinfo;
+use sys_info;
 use time;
 
 use std::time::Duration;
@@ -49,6 +50,17 @@ pub fn start(config: &Config) {
 		result.insert("numberOfCpus", json!(&num_cpus::get()));
 		let _ = ::util::hostname().map(|hostname| result.insert("hostname", json!(&hostname)));
 		result.insert("version", json!(&::VERSION.unwrap_or("unknown")));
+		result.insert("os_release", json!(&::sys_info::os_release().unwrap_or("unknown".to_string())));
+		if let Ok(boottime) = sys_info::boottime() {
+			result.insert("uptime", json!(boottime.tv_sec));
+		}
+		if let Ok(meminfo) = sys_info::mem_info() {
+			result.insert("memory", json!(meminfo.total));
+			result.insert("swap", json!(meminfo.swap_total));
+		}
+		if let Ok(cpuspeed) = sys_info::cpu_speed() {
+			result.insert("cpuSpeedInMhz", json!(cpuspeed));
+		}
 		let result = serde_json::to_string(&result).unwrap();
 
 		Ok(Response::with((status::Ok, mime!(Application/Json), result)))

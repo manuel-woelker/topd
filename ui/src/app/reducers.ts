@@ -200,7 +200,9 @@ function receiveSystemMetrics(state: State, action: any) {
 }
 
 function receiveSystemInfo(state: State, action: any) {
-	return Object.assign({}, state, {systemInfo: action.systemInfo});
+	let newState = Object.assign({}, state, {systemInfo: action.systemInfo});
+	newState.systemInfo.bootDate = Date.now() - (newState.systemInfo.uptime * 1000);
+	return newState;
 }
 
 

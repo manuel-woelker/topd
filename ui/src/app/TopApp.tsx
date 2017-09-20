@@ -14,6 +14,27 @@ import {HistoryComponent} from "../history/HistoryComponent";
 import {ProcessesComponent} from "../processes/ProcessesComponent";
 import {State} from "./reducers";
 import * as React from "react";
+declare const require: any;
+
+var humanizeDuration = require('humanize-duration')
+
+class UptimeComponent extends React.Component<{bootDate: number}> {
+	render() {
+		let uptime = Date.now() - this.props.bootDate;
+		return <span title={humanizeDuration(uptime)}>up: {humanizeDuration(uptime, { largest: 2 })}</span>;
+	}
+}
+
+function toFixed(input?: number) {
+	if (input !== 0 && (!input || !input.toFixed)) {
+		return input;
+	}
+	return input.toFixed(0);
+}
+
+function renderMem(memory: number) {
+	return toFixed(memory / 1024 / 1024) + " GB";
+}
 
 class TopAppUnconnected extends React.Component<State> {
 	render() {
@@ -74,13 +95,25 @@ class TopAppUnconnected extends React.Component<State> {
 				values: this.props.loadHistory
 			}
 		];
-
-		return <div>
-			<Navbar fluid style={{marginBottom: 0, minHeight: 40, height: 40}}>
+		/*
+		<Navbar fluid style={{marginBottom: 0, minHeight: 40, height: 40}}>
 				<NavbarBrand><a  style={{padding: "4px"}} href="#"><b>{this.props.systemInfo.hostname}</b><span
-					style={{display: "inline-block", width: 40}}/>topd <span
-					className="text-muted">{this.props.systemInfo.version} </span></a></NavbarBrand>
+					style={{display: "inline-block", width: 40}}/>topd <span className="pull-right"
+					className="pull-right text-muted">{this.props.systemInfo.version} </span></a></NavbarBrand>
 			</Navbar>
+
+		 */
+
+		let systemInfo = this.props.systemInfo;
+		return <div>
+			<div style={{padding: "8px", fontSize: "120%", height: "50px", display: "flex", flexWrap: "wrap", flex: "1 0 100px", justifyContent: "space-between"}}>
+				<span><b>{systemInfo.hostname}</b>&nbsp;
+				{systemInfo.os_release}</span>
+				<UptimeComponent bootDate={systemInfo.bootDate} />
+				<span>{renderMem(systemInfo.memory)} Mem | {renderMem(systemInfo.swap)} Swap</span>
+				<span>{systemInfo.numberOfCpus} CPUs@{systemInfo.cpuSpeedInMhz} Mhz</span>
+				<span><a style={{color: "#888"}} href="https://github.com/manuel-woelker/topd">topd {systemInfo.version}</a></span>
+			</div>
 
 			<div style={{padding: "20px", paddingTop: 0, position: "relative", height: "calc(100vh - 75px)"}}>
 				<SplitPane split="vertical" defaultSize="50%">
