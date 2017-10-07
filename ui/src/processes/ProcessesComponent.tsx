@@ -35,7 +35,7 @@ export class ProcessesComponent extends React.Component<{processes?: Process[]},
 		this.sort = this.sort.bind(this);
 		this.state = {
 			sortBy: "cpu",
-			sortDirection: "DESC",
+			sortDirection: "ASC",
 		};
 	}
 
@@ -44,6 +44,9 @@ export class ProcessesComponent extends React.Component<{processes?: Process[]},
 		processes = processes.slice();
 		let sortBy = this.state.sortBy;
 		let res = this.state.sortDirection == SortDirection.ASC ? -1 : 1;
+		if(sortBy === "cpu" || sortBy === "rss") {
+			res = -res;
+		}
 		processes.sort((a: any, b: any) => b[sortBy] > a[sortBy] ? res : -res);
 
 		return <AutoSizer>
