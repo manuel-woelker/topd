@@ -37,6 +37,7 @@ const history = createHistory();
 const routesMap = {
 	HOME: '/',      // action <-> url path
 	CHANGE_SORT: "/",
+	CHANGE_PROCESS_FILTER: "/",
 };
 const { reducer, middleware, enhancer } = connectRoutes(history, routesMap, {
 	querySerializer: queryString
