@@ -3,8 +3,12 @@ declare const require: any;
 import * as React from "react";
 import * as ReactDOM from 'react-dom';
 
-// Redux utility functions
-import { compose, createStore, applyMiddleware } from 'redux';
+import { connectRoutes } from 'redux-first-router'
+import {combineReducers, createStore, applyMiddleware, compose, AnyAction} from 'redux'
+import createHistory from 'history/createBrowserHistory'
+import * as queryString from 'query-string'
+
+
 // Redux DevTools store enhancers
 //import { devTools, persistState } from 'redux-devtools';
 // React components for Redux DevTools
@@ -12,12 +16,11 @@ import { compose, createStore, applyMiddleware } from 'redux';
 
 import { Provider } from 'react-redux';
 import { TopApp } from './app/TopApp';
-import reducers from './app/reducers';
+import reducers, {State} from './app/reducers';
 
 
 import 'react-virtualized/styles.css';
 
-//require("bootstrap/dist/css/bootstrap.css");
 require("./style/style.css");
 
 /*
@@ -28,10 +31,31 @@ const finalCreateStore = compose(
 //	persistState(window.location.href.match(/[?&]debug_session=([^&]+)\b/))
 )(createStore);
 */
+const history = createHistory();
 
-let finalCreateStore = createStore;
+// THE WORK:
+const routesMap = {
+	HOME: '/',      // action <-> url path
+	CHANGE_SORT: "/",
+};
+const { reducer, middleware, enhancer } = connectRoutes(history, routesMap, {
+	querySerializer: queryString
+}); // yes, 3 redux aspects
 
-let store = finalCreateStore(reducers);
+
+const middlewares = applyMiddleware(middleware);
+// note the order: enhancer, then middlewares
+function rootReducer(state: State, action: AnyAction): State {
+	let newState = reducers(state, action);
+	let oldLocationState = newState.location;
+	let newLocationState = reducer(oldLocationState as any, action);
+	if(oldLocationState !== newLocationState) {
+		newState = {...newState, location: newLocationState};
+	}
+	return newState;
+}
+
+const store = createStore(rootReducer, compose(enhancer, middlewares) as any);
 
 declare const module: any;
 

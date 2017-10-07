@@ -25,6 +25,7 @@
 		"@types/react-redux": "^5.0.7",
 		"@types/react-split-pane": "^0.1.9",
 		"@types/react-virtualized": "^9.7.4",
+		"@types/redux-first-router": "^1.9.3",
 		"awesome-typescript-loader": "^3.2.3",
 		"compression-webpack-plugin": "^1.0.0",
 		"css-loader": "^0.28.7",
@@ -38,12 +39,17 @@
 		"webpack-merge": "^4.1.0"
 	},
 	"dependencies": {
+		"@types/query-string": "^5.0.0",
+		"history": "^4.7.2",
 		"humanize-duration": "^3.10.1",
+		"query-string": "^5.0.0",
 		"react": "^15.6.1",
 		"react-dom": "^15.6.1",
 		"react-redux": "^5.0.6",
 		"react-split-pane": "^0.1.66",
 		"react-virtualized": "^9.9.0",
-		"redux": "^3.7.2"
+		"redux": "^3.7.2",
+		"redux-first-router": "^0.0.16-next",
+		"redux-first-router-link": "^1.4.1"
 	}
 }

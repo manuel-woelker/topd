@@ -1,3 +1,5 @@
+import {LocationState} from "redux-first-router";
+
 const HISTORY_SIZE = 30;
 
 export type DataSeries = number[];
@@ -45,6 +47,7 @@ export interface Process {
 }
 
 export interface State {
+	location?: LocationState;
 	systemMetrics: {
 		loadavg?: LoadAvg;
 		cpu_usage: CpuUsage;

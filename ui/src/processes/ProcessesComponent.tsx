@@ -1,9 +1,10 @@
 import * as React from "react";
-import {Process} from "../app/reducers";
+import {Process, State} from "../app/reducers";
 import {
 	AutoSizer, Column, SortDirection, SortDirectionType, Table, TableCellProps,
 	TableCellRenderer
 } from 'react-virtualized'
+import {connect} from "react-redux";
 
 function toFixed(input?: number) {
 	if (input !== 0 && (!input || !input.toFixed)) {
@@ -29,21 +30,18 @@ const memoryCellRender: TableCellRenderer = (props: TableCellProps) => {
 
 
 
-export class ProcessesComponent extends React.Component<{processes?: Process[]}, {sortBy: string, sortDirection: SortDirectionType}>{
+class ProcessesComponentUnconnected extends React.Component<{processes?: Process[], query: any, dispatch: any, sortBy: string, sortDirection: SortDirectionType}, {}>{
 	constructor(...args: any[]) {
 		super(...args);
 		this.sort = this.sort.bind(this);
-		this.state = {
-			sortBy: "cpu",
-			sortDirection: "ASC",
-		};
 	}
 
 	render() {
 		let processes = this.props.processes || [];
 		processes = processes.slice();
-		let sortBy = this.state.sortBy;
-		let res = this.state.sortDirection == SortDirection.ASC ? -1 : 1;
+		let sortBy = this.props.sortBy || "cpu";
+		let sortDirection = this.props.sortDirection || "ASC";
+		let res = sortDirection == SortDirection.ASC ? -1 : 1;
 		if(sortBy === "cpu" || sortBy === "rss") {
 			res = -res;
 		}
@@ -56,7 +54,7 @@ export class ProcessesComponent extends React.Component<{processes?: Process[]},
 			headerHeight={20}
 			rowHeight={30}
 			sortBy={sortBy}
-			sortDirection={this.state.sortDirection}
+			sortDirection={sortDirection}
 			sort={this.sort}
 			rowCount={processes.length}
 			rowGetter={({ index }) => processes[index]}
@@ -64,10 +62,11 @@ export class ProcessesComponent extends React.Component<{processes?: Process[]},
 			<Column
 				label='PID'
 				dataKey='pid'
-				width={50}
+				width={70}
 				className="align-right"
 			/>
 			<Column
+				headerRenderer={() => <span>Process</span>}
 				width={200}
 				label='Process'
 				dataKey='cmdline'
@@ -94,11 +93,21 @@ export class ProcessesComponent extends React.Component<{processes?: Process[]},
 	}
 
 	sort(sortState: { sortBy: string, sortDirection: SortDirectionType }) {
-		this.setState(sortState)
+		this.props.dispatch({type: "CHANGE_SORT", query: sortState});
 	}
 }
 
-
+export const ProcessesComponent = connect((state: State) => {
+	let props = {
+		processes: state.systemMetrics.processes,
+	} as any;
+	if(state.location && state.location.query) {
+		let query = state.location.query as any;
+		props.sortBy = query.sortBy;
+		props.sortDirection = query.sortDirection;
+	}
+	return props;
+})(ProcessesComponentUnconnected as any);
 
 
 

@@ -122,7 +122,7 @@ class TopAppUnconnected extends React.Component<State> {
 						<HistoryComponent metrics={diskMetrics}/>
 					</div>
 					<div className="pane" style={{height: "100%"}}>
-						<ProcessesComponent processes={this.props.systemMetrics.processes}/>
+						<ProcessesComponent />
 					</div>
 				</SplitPane>
 			</div>
