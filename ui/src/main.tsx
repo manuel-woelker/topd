@@ -103,7 +103,7 @@ window.onload = function () {
 
 	getSystemInfo();
 
-	var evtSource = new EventSource("/api/system-metrics-events");
+	var evtSource = new EventSource("api/system-metrics-events");
 	evtSource.addEventListener("metrics", function(e: any) {
 		var metrics = JSON.parse(e.data);
 		store.dispatch({type: "RECEIVE_SYSTEM_METRICS", systemMetrics: metrics});
